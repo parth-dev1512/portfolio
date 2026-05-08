@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name · Works</title>
+  <meta name="description" content="Portfolio index — code, words, screen, venture, stage." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:  #f6f1e6;
+      --cream2: #ece6d8;
+      --cream3: #e0d9c8;
+      --ink:    #1a1a1a;
+      --muted:  #6a6a6a;
+      --accent: #b8431a;
+      --white:  #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream2);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      color: var(--ink);
+      padding: 28px 40px 64px;
+      min-height: 100vh;
+    }
+
+    /* ── Site header ── */
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 22px;
+    }
+    .site-header a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .site-header a:hover { color: var(--ink); }
+
+    /* ── Control bar ── */
+    .control-bar {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+      padding: 22px 28px 26px;
+      margin-bottom: 22px;
+    }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .control-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .control-title {
+      font-family: "Caveat", cursive;
+      font-size: 30px;
+      line-height: 1;
+      margin-top: 4px;
+      display: inline-block;
+      position: relative;
+    }
+    .control-title svg {
+      position: absolute;
+      left: 0; right: 0; bottom: -3px;
+      width: 100%; height: 5px;
+    }
+    .mode-badge {
+      font-size: 11px;
+      color: var(--ink);
+      border: 1px dashed var(--ink);
+      padding: 4px 11px;
+      background: var(--cream);
+      white-space: nowrap;
+    }
+
+    /* ── Knob track ── */
+    .track-wrap {
+      position: relative;
+      height: 110px;
+      background: var(--cream);
+      border: 1.5px solid var(--ink);
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+    }
+    .track-line {
+      position: absolute;
+      left: 60px; right: 60px;
+      top: 50%;
+      height: 3px;
+      background: var(--ink);
+      transform: translateY(-50%);
+    }
+    /* stop marker */
+    .stop-pin {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .stop-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--ink);
+      border: 2px solid var(--cream);
+      box-shadow: 0 0 0 1.5px var(--ink);
+    }
+    .stop-icon {
+      position: absolute;
+      left: 50%; top: -36px;
+      transform: translateX(-50%);
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink);
+      background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.25s;
+    }
+    .stop-icon.active { background: var(--ink); }
+    .stop-icon svg { transition: stroke 0.25s, fill 0.25s; }
+    .stop-label {
+      position: absolute;
+      left: 50%; top: 18px;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9a9a9a;
+      font-weight: 400;
+      white-space: nowrap;
+      transition: color 0.2s, font-weight 0.2s;
+    }
+    .stop-label.active { color: var(--ink); font-weight: 700; }
+    .stop-blurb {
+      position: absolute;
+      left: 50%; top: 34px;
+      transform: translateX(-50%);
+      font-family: "Caveat", cursive;
+      font-size: 14px;
+      color: #bcbcbc;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .stop-blurb.active { color: var(--accent); }
+
+    /* ── The big knob ── */
+    .knob {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      cursor: grab;
+      transition: left 0.3s cubic-bezier(0.4, 1.5, 0.6, 1), box-shadow 0.15s;
+      z-index: 6;
+    }
+    .knob.dragging {
+      cursor: grabbing;
+      box-shadow: 6px 6px 0 var(--accent);
+      transition: box-shadow 0.15s;
+    }
+    .knob-dot {
+      position: absolute; top: 5px; left: 50%;
+      transform: translateX(-50%);
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* ── Knob hint row ── */
+    .track-hint {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-family: "Caveat", cursive;
+      font-size: 16px;
+      color: var(--accent);
+    }
+
+    /* ── Preview panel ── */
+    .preview {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+
+    /* Preview header */
+    .preview-header {
+      padding: 18px 24px 16px;
+      border-bottom: 1.5px solid var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .preview-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .preview-title {
+      font-size: 30px;
+      margin: 4px 0 4px;
+      line-height: 1;
+    }
+    .preview-sub {
+      font-size: 12px;
+      line-height: 1.4;
+      max-width: 480px;
+      color: #3a3a3a;
+    }
+    .preview-nav {
+      display: flex;
+      gap: 4px;
+      font-size: 11px;
+      align-items: center;
+    }
+    .preview-nav span {
+      padding: 2px 7px;
+      border: 1px solid currentColor;
+    }
+
+    /* Filter strip */
+    .filter-strip {
+      padding: 9px 24px;
+      border-bottom: 1px dashed var(--ink);
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      font-size: 10px;
+      background: #fbfaf5;
+      align-items: center;
+    }
+    .filter-strip .fl-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .filter-tag {
+      padding: 2px 8px;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .filter-tag.active { background: var(--ink); color: var(--cream); }
+    .filter-tag:hover:not(.active) { background: var(--cream); }
+    .filter-count {
+      margin-left: auto;
+      color: var(--muted);
+    }
+
+    /* Work grid */
+    .work-grid {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    /* Generic tile */
+    .tile {
+      border: 1.5px solid var(--ink);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .tile:hover {
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: translate(-2px,-2px);
+    }
+    .tile-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .tile-cap {
+      background: var(--white);
+      border-top: 1px solid var(--ink);
+      padding: 5px 8px;
+      font-size: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .tile-cap .tc-name {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .tile-cap .tc-mark {
+      font-size: 9px;
+      flex-shrink: 0;
+    }
+
+    /* Essay tile */
+    .tile-essay {
+      border: 1.5px solid var(--ink);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .tile-essay:hover {
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: translate(-2px,-2px);
+    }
+    .tile-essay .te-num {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .tile-essay .te-title {
+      font-size: 21px;
+      line-height: 1.1;
+      font-style: italic;
+    }
+    .tile-essay .te-spacer { flex: 1; }
+    .tile-essay .te-open {
+      font-size: 11px;
+      color: #3a3a3a;
+      font-style: italic;
+    }
+
+    /* Venture tile */
+    .tile-venture {
+      border: 1.5px solid var(--ink);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .tile-venture:hover {
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: translate(-2px,-2px);
+    }
+    .tile-venture .tv-year {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .tile-venture .tv-name {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+    .tile-venture .tv-spacer { flex: 1; }
+    .tile-venture .tv-status {
+      align-self: flex-start;
+      padding: 2px 8px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Stage row */
+    .stage-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 12px 4px;
+      border-bottom: 1px dashed var(--ink);
+      gap: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .stage-row:first-child { border-top: 1px dashed var(--ink); }
+    .stage-row:hover { background: var(--cream); }
+    .stage-row .sr-star {
+      font-family: "Caveat", cursive;
+      font-size: 21px;
+      min-width: 26px;
+    }
+    .stage-row .sr-title {
+      flex: 1;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .stage-row .sr-num {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* Preview footer */
+    .preview-footer {
+      padding: 9px 24px;
+      border-top: 1px dashed var(--ink);
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: #fbfaf5;
+    }
+
+    /* ── Annotation notes ── */
+    .notes-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 20px;
+      font-family: "Caveat", cursive;
+      font-size: 16px;
+      color: var(--accent);
+      line-height: 1.25;
+    }
+    .notes-row .note-right { text-align: right; }
+
+    /* ── Transition ── */
+    .preview {
+      transition: opacity 0.2s;
+    }
+    .preview.fade { opacity: 0; }
+
+    @media (max-width: 600px) {
+      body { padding: 16px 16px 48px; }
+      .notes-row { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site header -->
+  <header class="site-header">
+    <a href="index.html" id="backHome">← your name</a>
+    <span id="versionTag">v2 · single-knob index</span>
+  </header>
+
+  <!-- Control bar -->
+  <div class="control-bar">
+    <div class="control-header">
+      <div>
+        <div class="control-label">tune the portfolio →</div>
+        <div class="control-title" id="controlTitle">
+          five modes, one knob
+          <svg viewBox="0 0 200 6" preserveAspectRatio="none">
+            <path d="M2,4 Q50,1 100,3 T198,3" stroke="#1a1a1a" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mode-badge" id="modeBadge">mode: screen · photos &amp; film</div>
+    </div>
+
+    <!-- Track -->
+    <div class="track-wrap" id="track">
+      <div class="track-line"></div>
+      <!-- stops injected by JS -->
+      <div class="knob" id="knob">
+        <svg id="knobIcon" width="28" height="28" viewBox="0 0 20 20" fill="none"></svg>
+        <div class="knob-dot"></div>
+      </div>
+    </div>
+
+    <div class="track-hint">
+      <span>← drag the knob, or click a stop</span>
+      <span id="trackHintRight">one mode at a time</span>
+    </div>
+  </div>
+
+  <!-- Preview panel -->
+  <div class="preview" id="preview">
+    <!-- injected by JS -->
+  </div>
+
+  <!-- Annotation notes -->
+  <div class="notes-row">
+    <div>← five notches on the bar.<br />knob snaps to the nearest one.</div>
+    <div class="note-right">everything below re-renders →<br />type, color, layout, copy, density.</div>
+  </div>
+
+<script>
+// ──────────────────────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────────────────────
+const STOPS = [
+  {
+    id: 'code', label: 'code', blurb: 'repos & systems',
+    eyebrow: '/index/', title: 'works.json', titleFont: 'Georgia, serif', titleItalic: false,
+    subtitle: 'open-source, side projects, tools. sorted by year, filterable.',
+    nav: ['/repos', '/talks', '/notes', '/about'], navMono: true,
+    filters: ['all', 'web', 'systems', 'ml', 'tools', 'open-source'],
+    totalCount: 142,
+    cols: 6, tileType: 'image', tileHeight: 110,
+    accent: '#1a1a1a', headerBg: '#f6f1e6', headerColor: '#1a1a1a',
+    tileBg: 'repeating-linear-gradient(0deg, #f4f1ea 0 2px, #e0d9c8 2px 4px)',
+    tileAccent: '#1a1a1a', tileFont: 'ui-monospace, monospace',
+    hintRight: '{ structured }',
+    icon: 'brackets',
+    items: [
+      'synth-engine','graph-store','tiny-renderer','webrtc-relay',
+      'log-parser','ml-sandbox','cli-tools','dotfiles',
+      'bezier-lab','csv-fmt','plot-kit','dns-probe',
+      'shader-toy','ast-walker','ring-buffer','fuzz-runner',
+      'pubsub-mini','http-trace','rate-limit','state-fsm',
+      'b-tree','json-fix','site-gen','midi-bridge',
+    ],
+  },
+  {
+    id: 'words', label: 'words', blurb: 'essays & notes',
+    eyebrow: '— a reading room —', title: 'collected writing', titleFont: 'Georgia, serif', titleItalic: true,
+    subtitle: 'essays, notes, fragments. on craft, time, and small inventions.',
+    nav: ['essays', 'notes', 'reading', 'about'], navMono: false,
+    filters: ['all', 'essays', 'notes', 'reviews', 'fragments', 'translations'],
+    totalCount: 38,
+    cols: 2, tileType: 'essay', tileHeight: 130,
+    accent: '#5a3a1a', headerBg: '#fbf6e8', headerColor: '#5a3a1a',
+    tileBg: 'linear-gradient(180deg, #fbf6e8 0%, #f4ecd8 100%)',
+    hintRight: 'one mode at a time',
+    icon: 'pen',
+    items: [
+      'on slow craft','a defense of margins','noise as material',
+      'the shape of an hour','six gardens','on rereading',
+      'against productivity','a small grammar of wonder',
+    ],
+  },
+  {
+    id: 'screen', label: 'screen', blurb: 'photos & film',
+    eyebrow: 'reel', title: 'screen & shutter', titleFont: '"Caveat", cursive', titleItalic: false,
+    subtitle: 'photographs, film stills, video pieces. mostly walking, mostly slow.',
+    nav: ['photos', 'film', 'video', 'about'], navMono: false,
+    filters: ['all', '35mm', 'digital', 'film stills', 'video', 'archive'],
+    totalCount: 220,
+    cols: 4, tileType: 'image', tileHeight: 130,
+    accent: '#1a1a1a', headerBg: '#1a1a1a', headerColor: '#f6f1e6',
+    tileBg: 'repeating-linear-gradient(45deg, #2a2a2a 0 8px, #3a3a3a 8px 16px)',
+    tileAccent: '#f6f1e6', tileFont: 'Georgia, serif',
+    hintRight: 'one mode at a time',
+    icon: 'film',
+    items: [
+      'venice 22 · roof','studio · 04','river · winter','door · 11',
+      'sky · august','night · cab','field · dawn','self · 03',
+      'still 01','still 04','still 09','still 11',
+      'hallway','kitchen · 6am','bridge','station',
+    ],
+  },
+  {
+    id: 'venture', label: 'venture', blurb: 'companies & bets',
+    eyebrow: '/ventures/', title: 'things i started', titleFont: 'Georgia, serif', titleItalic: false,
+    subtitle: 'companies, products, bets. some live, some folded, all instructive.',
+    nav: ['ventures', 'investments', 'advising', 'about'], navMono: true,
+    filters: ['all', 'founded', 'co-founded', 'advised', 'invested', 'sunset'],
+    totalCount: 12,
+    cols: 3, tileType: 'venture', tileHeight: 130,
+    accent: '#2a4a8a', headerBg: '#eef0f4', headerColor: '#2a4a8a',
+    tileBg: 'linear-gradient(135deg, #f4f1ea 0%, #e0e3ea 100%)',
+    hintRight: 'one mode at a time',
+    icon: 'compass',
+    items: [
+      "koto · '22 · live",
+      "paperhand · '21 · sunset",
+      "orbit.fm · '23 · live",
+      "meridian · '20 · acq.",
+      "long lane · '24 · live",
+      "glasswork · '19 · sunset",
+      "minim · '23 · advised",
+      "archive labs · '22 · invested",
+      "tidemark · '24 · stealth",
+    ],
+  },
+  {
+    id: 'stage', label: 'stage', blurb: 'talks & performance',
+    eyebrow: "★ tonight's programme ★", title: 'on stage', titleFont: '"Caveat", cursive', titleItalic: false,
+    subtitle: 'talks, readings, performances, sets. the things that need a room.',
+    nav: ['talks', 'readings', 'sets', 'about'], navMono: false,
+    filters: ['all', 'talks', 'readings', 'panels', 'dj sets', 'workshops'],
+    totalCount: 24,
+    cols: 1, tileType: 'stage', tileHeight: 70,
+    accent: '#9a2a3a', headerBg: '#fbf0ec', headerColor: '#9a2a3a',
+    tileBg: null,
+    hintRight: '✦ on stage ✦',
+    icon: 'spark',
+    items: [
+      "on slow software · strange loop · sept '25",
+      "the long here · poetry house · jun '25",
+      "panel · interfaces of attention · mar '25",
+      "reading · field notes · feb '25",
+      "dj set · loose · dec '24",
+      "workshop · making in public · oct '24",
+      "keynote · craft & code · sept '24",
+    ],
+  },
+];
+
+// ──────────────────────────────────────────────────────────────
+// ICONS
+// ──────────────────────────────────────────────────────────────
+function iconSVG(kind, color) {
+  const c = color || '#1a1a1a';
+  switch (kind) {
+    case 'brackets': return `<path d="M7 3 Q3 5 3 10 Q3 15 7 17" stroke="${c}" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M13 3 Q17 5 17 10 Q17 15 13 17" stroke="${c}" stroke-width="1.6" stroke-linecap="round" fill="none"/>`;
+    case 'pen': return `<path d="M4 16 L13 7 L15 9 L6 18 Z" stroke="${c}" stroke-width="1.4" fill="none" stroke-linejoin="round" transform="translate(0,-2)"/><path d="M13 5 L15 7" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/><path d="M3 17 L17 17" stroke="${c}" stroke-width="1.2" stroke-linecap="round"/>`;
+    case 'film': return `<rect x="3" y="6" width="14" height="9" stroke="${c}" stroke-width="1.4" fill="none"/><rect x="3" y="4" width="2" height="2" fill="${c}"/><rect x="7" y="4" width="2" height="2" fill="${c}"/><rect x="11" y="4" width="2" height="2" fill="${c}"/><rect x="15" y="4" width="2" height="2" fill="${c}"/><rect x="3" y="15" width="2" height="2" fill="${c}"/><rect x="7" y="15" width="2" height="2" fill="${c}"/><rect x="11" y="15" width="2" height="2" fill="${c}"/><rect x="15" y="15" width="2" height="2" fill="${c}"/>`;
+    case 'compass': return `<circle cx="10" cy="10" r="7" stroke="${c}" stroke-width="1.4" fill="none"/><path d="M10 5 L12 10 L10 15 L8 10 Z" stroke="${c}" stroke-width="1.2" fill="none" stroke-linejoin="round"/><circle cx="10" cy="10" r="1.2" fill="${c}"/>`;
+    case 'spark': return `<path d="M10 3 L11.2 8.8 L17 10 L11.2 11.2 L10 17 L8.8 11.2 L3 10 L8.8 8.8 Z" stroke="${c}" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`;
+    default: return '';
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// STATE & KNOB
+// ──────────────────────────────────────────────────────────────
+let currentStop = 2; // start at 'screen'
+const TRACK_PAD = 60;
+
+const track  = document.getElementById('track');
+const knob   = document.getElementById('knob');
+const knobIcon = document.getElementById('knobIcon');
+
+function stopX(idx) {
+  const usable = track.offsetWidth - TRACK_PAD * 2;
+  return TRACK_PAD + (idx / (STOPS.length - 1)) * usable;
+}
+
+function renderStops() {
+  // remove old stop pins
+  track.querySelectorAll('.stop-pin').forEach(el => el.remove());
+  STOPS.forEach((s, i) => {
+    const pin = document.createElement('div');
+    pin.className = 'stop-pin';
+    pin.style.left = stopX(i) + 'px';
+    const active = i === currentStop;
+    pin.innerHTML = `
+      <div class="stop-dot"></div>
+      <div class="stop-icon${active ? ' active' : ''}" id="si-${i}">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">${iconSVG(s.icon, active ? '#f6f1e6' : '#1a1a1a')}</svg>
+      </div>
+      <div class="stop-label${active ? ' active' : ''}">${s.label}</div>
+      <div class="stop-blurb${active ? ' active' : ''}">${s.blurb}</div>
+    `;
+    pin.addEventListener('click', () => setStop(i));
+    track.appendChild(pin);
+  });
+}
+
+function updateKnob() {
+  const x = stopX(currentStop);
+  knob.style.left = x + 'px';
+  const s = STOPS[currentStop];
+  knobIcon.innerHTML = iconSVG(s.icon, '#f6f1e6');
+  document.getElementById('modeBadge').textContent = `mode: ${s.label} · ${s.blurb}`;
+  document.getElementById('trackHintRight').textContent = s.hintRight;
+}
+
+function setStop(idx, skipRender) {
+  currentStop = idx;
+  renderStops();
+  updateKnob();
+  if (!skipRender) renderPreview();
+}
+
+// Drag logic
+let dragging = false;
+knob.addEventListener('mousedown', e => { dragging = true; knob.classList.add('dragging'); e.stopPropagation(); });
+track.addEventListener('mousedown', e => {
+  const rect = track.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left - TRACK_PAD) / (rect.width - TRACK_PAD * 2)));
+  setStop(Math.round(ratio * (STOPS.length - 1)));
+  dragging = true; knob.classList.add('dragging');
+});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const rect = track.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left - TRACK_PAD) / (rect.width - TRACK_PAD * 2)));
+  setStop(Math.round(ratio * (STOPS.length - 1)));
+});
+window.addEventListener('mouseup', () => { dragging = false; knob.classList.remove('dragging'); });
+
+// Touch
+knob.addEventListener('touchstart', e => { dragging = true; knob.classList.add('dragging'); });
+window.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  const t = e.touches[0];
+  const rect = track.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (t.clientX - rect.left - TRACK_PAD) / (rect.width - TRACK_PAD * 2)));
+  setStop(Math.round(ratio * (STOPS.length - 1)));
+}, { passive: true });
+window.addEventListener('touchend', () => { dragging = false; knob.classList.remove('dragging'); });
+
+// Keyboard arrows
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && currentStop < STOPS.length - 1) setStop(currentStop + 1);
+  if (e.key === 'ArrowLeft'  && currentStop > 0)                 setStop(currentStop - 1);
+});
+
+// ──────────────────────────────────────────────────────────────
+// RENDER PREVIEW
+// ──────────────────────────────────────────────────────────────
+function renderPreview() {
+  const s = STOPS[currentStop];
+  const preview = document.getElementById('preview');
+  preview.classList.add('fade');
+
+  setTimeout(() => {
+    preview.innerHTML = buildPreview(s);
+    preview.classList.remove('fade');
+    // filter click events
+    preview.querySelectorAll('.filter-tag').forEach((tag, i) => {
+      tag.addEventListener('click', () => {
+        preview.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+      });
+    });
+  }, 180);
+}
+
+function buildPreview(s) {
+  // nav items
+  const navItems = s.nav.map((n, i) =>
+    `<span style="${i === 0 && !s.navMono ? `border-bottom: 1.5px solid ${s.accent};` : ''}">${n}</span>`
+  ).join('');
+
+  // filters
+  const filterItems = s.filters.map((f, i) =>
+    `<span class="filter-tag${i === 0 ? ' active' : ''}">${f}</span>`
+  ).join('');
+
+  // title markup
+  const titleEl = `<h1 class="preview-title" style="font-family:${s.titleFont};font-style:${s.titleItalic ? 'italic' : 'normal'};color:${s.id === 'screen' ? '#f6f1e6' : s.accent};">${s.title}</h1>`;
+
+  // work grid
+  let gridItems = '';
+  const filterLabel = s.id === 'words' ? 'index:' : s.id === 'stage' ? 'when:' : 'filter:';
+
+  if (s.tileType === 'image') {
+    const totalItems = s.items.length;
+    gridItems = s.items.map((label, i) => {
+      const featured = s.id === 'screen' && (i === 0 || i === 7);
+      const h = featured ? Math.round(s.tileHeight * 1.4) : s.tileHeight;
+      const colSpan = featured ? 2 : 1;
+      const markChar = s.id === 'code' ? `[${i+1}]` : s.id === 'screen' ? '✦' : '·';
+      return `
+        <div class="tile" style="height:${h}px;grid-column:span ${colSpan};background:${s.tileBg};">
+          <div class="tile-inner">
+            <div class="tile-cap" style="font-family:${s.tileFont || 'ui-monospace, monospace'};">
+              <span class="tc-name">${label}</span>
+              <span class="tc-mark" style="color:${s.tileAccent || s.accent};">${markChar}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  } else if (s.tileType === 'essay') {
+    gridItems = s.items.map((label, i) => `
+      <div class="tile-essay" style="background:${s.tileBg};min-height:${s.tileHeight}px;">
+        <span class="te-num">essay · 0${i+1} · ${6 + (i % 9)} min</span>
+        <h3 class="te-title" style="color:${s.accent};font-family:Georgia,serif;">${label}</h3>
+        <div class="te-spacer"></div>
+        <div class="te-open">——— a short opening sentence sits here, in italics, like a pull quote.</div>
+      </div>`).join('');
+  } else if (s.tileType === 'venture') {
+    gridItems = s.items.map((label, i) => {
+      const parts = label.split(' · ');
+      const name = parts[0], year = parts[1], status = parts[2];
+      return `
+        <div class="tile-venture" style="background:${s.tileBg};min-height:${s.tileHeight}px;">
+          <span class="tv-year">${year}</span>
+          <h3 class="tv-name" style="color:${s.accent};font-family:Georgia,serif;">${name}</h3>
+          <div class="tv-spacer"></div>
+          <span class="tv-status" style="border:1px solid ${s.accent};color:${s.accent};">${status}</span>
+        </div>`;
+    }).join('');
+  } else if (s.tileType === 'stage') {
+    gridItems = `<div style="padding:6px 0 0;">` + s.items.map((label, i) => `
+      <div class="stage-row">
+        <span class="sr-star" style="color:${s.accent};">★</span>
+        <span class="sr-title">${label}</span>
+        <span class="sr-num">[#${String(i+1).padStart(2,'0')}]</span>
+      </div>`).join('') + `</div>`;
+  }
+
+  const gridPad = s.tileType === 'stage' ? '0 22px 22px' : '20px';
+  const gridGap = s.tileType === 'stage' ? '0' : '12px';
+
+  return `
+    <div class="preview-header" style="background:${s.headerBg};color:${s.headerColor};">
+      <div>
+        <div class="preview-eyebrow" style="color:${s.id==='screen' ? '#bcbcbc' : '#6a6a6a'};">${s.eyebrow}</div>
+        ${titleEl}
+        <p class="preview-sub" style="color:${s.id==='screen' ? '#cfc8b8' : '#3a3a3a'};">${s.subtitle}</p>
+      </div>
+      <nav class="preview-nav" style="font-family:${s.navMono ? 'ui-monospace,monospace' : '"Caveat",cursive'};font-size:${s.navMono ? '11px' : '18px'};color:${s.headerColor};">
+        ${navItems}
+      </nav>
+    </div>
+    <div class="filter-strip">
+      <span class="fl-label">${filterLabel}</span>
+      ${filterItems}
+      <span class="filter-count">showing ${s.items.length} of ${s.totalCount}</span>
+    </div>
+    <div class="work-grid" style="grid-template-columns:repeat(${s.cols},1fr);padding:${gridPad};gap:${gridGap};">
+      ${gridItems}
+    </div>
+    <div class="preview-footer">
+      <span>mode · ${s.label}</span>
+      <span>${s.blurb}</span>
+    </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────────────────────
+renderStops();
+updateKnob();
+renderPreview();
+
+// Re-render stop positions on resize
+window.addEventListener('resize', () => {
+  renderStops();
+  updateKnob();
+});
+</script>
+</body>
+</html>

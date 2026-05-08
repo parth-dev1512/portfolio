@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name · Portfolio</title>
+  <meta name="description" content="A formal visiting card and portfolio entrance." />
+  <!-- Preload fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* CSS Reset */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: #0f0f0f;
+      font-family: 'Inter', sans-serif;
+      color: #000;
+    }
+
+    /* ── Scrolling Media Panel Background ── */
+    .background-panel {
+      position: fixed;
+      /* Oversize the panel slightly to allow angled rotation without showing edges */
+      top: -15%;
+      left: -10%;
+      right: -10%;
+      bottom: -15%;
+      display: flex;
+      gap: 1.5vw;
+      transform: rotate(-4deg) scale(1.05);
+      /* Dynamic slant */
+      opacity: 0.55;
+      /* Dim enough to let the card stand out */
+      pointer-events: none;
+      /* No interaction */
+      z-index: 1;
+      filter: grayscale(30%) contrast(1.1);
+    }
+
+    .media-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5vw;
+    }
+
+    /* Continuous Scroll Animations */
+    @keyframes scroll-up {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-50%);
+      }
+    }
+
+    @keyframes scroll-down {
+      0% {
+        transform: translateY(-50%);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .media-col.up {
+      animation: scroll-up linear infinite;
+    }
+
+    .media-col.down {
+      animation: scroll-down linear infinite;
+    }
+
+    /* Speeds and directions for columns */
+    .media-col:nth-child(1) {
+      animation-duration: 90s;
+      animation-name: scroll-up;
+    }
+
+    .media-col:nth-child(2) {
+      animation-duration: 75s;
+      animation-name: scroll-down;
+    }
+
+    .media-col:nth-child(3) {
+      animation-duration: 110s;
+      animation-name: scroll-up;
+    }
+
+    .media-col:nth-child(4) {
+      animation-duration: 85s;
+      animation-name: scroll-down;
+    }
+
+    .media-col:nth-child(5) {
+      animation-duration: 95s;
+      animation-name: scroll-up;
+    }
+
+    .media-item {
+      width: 100%;
+      border-radius: 4px;
+      object-fit: cover;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      background: #222;
+    }
+
+    /* ── Cinematic Overlay / Vignette ── */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* ── Center Stage ── */
+    .stage {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Formal Visiting Card ── */
+    .visiting-card {
+      background: #ffffff;
+      background-image: radial-gradient(#f9f9f9 1px, transparent 0);
+      background-size: 10px 10px;
+      color: #000000;
+      width: min(840px, 100%);
+      aspect-ratio: 1.85 / 1;
+      box-shadow:
+        0 40px 80px -20px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .card-left {
+      width: 38%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: grayscale(100%) contrast(1.1);
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
+
+    }
+
+    .card-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 64px 56px;
+    }
+
+    .card-header {
+      margin-bottom: 24px;
+    }
+
+    .name {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #0d0d0d;
+    }
+
+    .divider {
+      height: 1px;
+      background: #d4d4d4;
+      border: none;
+      margin: 0 0 28px 0;
+      width: 40px;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .bio {
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: #444;
+      max-width: 95%;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 16px;
+    }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .contact-label {
+      font-size: 8.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .contact-value {
+      color: #000;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .contact-value:hover {
+      color: #666;
+    }
+
+    .actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: #000;
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #222;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-secondary {
+      color: #000;
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border: 1px solid #000;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f0f0f0;
+      border-color: #000;
+    }
+
+    /* ── Responsive Adjustments ── */
+    @media (max-width: 600px) {
+      .visiting-card {
+        flex-direction: column;
+        aspect-ratio: auto;
+      }
+
+      .card-left {
+        width: 100%;
+        height: 280px;
+      }
+
+      .card-right {
+        padding: 40px 32px;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .background-panel {
+        transform: rotate(-2deg) scale(1.1);
+      }
+
+      .name {
+        font-size: 38px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 32px;
+      }
+
+      .btn-primary {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Dynamic Scrolling Media Background -->
+  <div class="background-panel" id="scrollingPanel"></div>
+
+  <!-- Cinematic Vignette -->
+  <div class="vignette"></div>
+
+  <!-- Center Stage with Visiting Card -->
+  <div class="stage">
+    <div class="visiting-card">
+      <div class="card-left">
+        <img src="me.jpeg" alt="Portrait" class="profile-pic">
+      </div>
+
+      <div class="card-right">
+        <div class="card-header">
+          <div>
+            <h1 class="name">Parth Agarwal</h1>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="card-body">
+          <p class="bio">
+            I build things - spaces, communities, and the bridges between them.
+          </p>
+
+          <div class="contact-grid">
+            <div class="contact-item">
+              <span class="contact-label">E-Mail</span>
+              <a href="mailto:parthagarwal1512@gmail.com" target="_blank"
+                class="contact-value">parthagarwal1512@gmail.com</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">LinkedIn</span>
+              <a href="https://www.linkedin.com/in/parth-agarwal-2258ab272/" target="_blank"
+                class="contact-value">linkedin.com/in/parth-agarwal</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">Instagram</span>
+              <a href="https://www.instagram.com/parthagarwal429/" class="contact-value"
+                target="_blank">@parthagarwal429</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="portfolio.html" class="btn-primary">Enter Portfolio →</a>
+          <a href="#" class="btn-secondary">Download Résumé</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Script to generate the unified scrolling panel of photos & videos -->
+  <script>
+    const photos = [
+      'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=600&q=80',
+      'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=600&q=80',
+      'https://images.unsplash.com/photo-1549490349-8643362247b5?w=600&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+      'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?w=600&q=80',
+      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80',
+      'https://images.unsplash.com/photo-1481277542470-605612bd2d61?w=600&q=80',
+      'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=600&q=80',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80'
+    ];
+
+    const videos = [
+      'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
+      'https://assets.mixkit.co/videos/preview/mixkit-ink-swirling-in-water-238-large.mp4',
+      'https://assets.mixkit.co/videos/preview/mixkit-tree-branches-in-the-breeze-1188-large.mp4'
+    ];
+
+    const numCols = 5;
+    const panel = document.getElementById('scrollingPanel');
+
+    function buildGrid() {
+      panel.innerHTML = '';
+      for (let i = 0; i < numCols; i++) {
+        const col = document.createElement('div');
+        col.className = 'media-col ' + (i % 2 === 0 ? 'up' : 'down');
+
+        let items = [];
+        // Generate 5 items per column
+        for (let j = 0; j < 5; j++) {
+          // Inject a video into specific slots for organic mixing
+          if ((i === 1 && j === 2) || (i === 3 && j === 4) || (i === 4 && j === 1)) {
+            const randomVid = videos[Math.floor(Math.random() * videos.length)];
+            // Mix heights to make masonry effect
+            const height = 30 + Math.floor(Math.random() * 15);
+            items.push(`<video class="media-item" style="height: ${height}vh;" autoplay muted loop playsinline>
+                                        <source src="${randomVid}" type="video/mp4">
+                                    </video>`);
+          } else {
+            const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
+            const height = 25 + Math.floor(Math.random() * 20);
+            items.push(`<img src="${randomPhoto}" class="media-item" style="height: ${height}vh;" alt="portfolio background image">`);
+          }
+        }
+
+        const colContent = items.join('');
+        // Duplicate the items within the column to allow the CSS translation to repeat seamlessly
+        col.innerHTML = colContent + colContent;
+        panel.appendChild(col);
+      }
+    }
+
+    buildGrid();
+  </script>
+</body>
+
+</html>
