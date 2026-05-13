@@ -157,6 +157,15 @@
       flex-direction: row;
       border-radius: 4px;
       overflow: hidden;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .visiting-card:hover {
+      transform: translateY(-20px) scale(1.015) rotateX(2deg);
+      box-shadow:
+        0 80px 150px -30px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.15);
     }
 
     .card-left {
@@ -216,6 +225,18 @@
       line-height: 1.65;
       color: #444;
       max-width: 95%;
+    }
+
+    .bio a {
+      color: #000;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .bio a:hover {
+      color: #666;
     }
 
     .contact-grid {
@@ -297,6 +318,7 @@
       .stage {
         padding: 16px;
       }
+
       .visiting-card {
         flex-direction: column;
         aspect-ratio: auto;
@@ -341,10 +363,45 @@
         margin-top: 24px;
       }
 
-      .btn-primary, .btn-secondary {
+      .btn-primary,
+      .btn-secondary {
         width: 100%;
         text-align: center;
       }
+    }
+
+    /* ── Floating Words Background Layer ── */
+    .floating-words-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    .floating-word {
+      position: absolute;
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 400;
+      font-style: italic;
+      color: #fff;
+      white-space: nowrap;
+      user-select: none;
+      filter: blur(0.3px);
+
+      /* Start hidden behind the card center */
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 0;
+      transition:
+        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.8s ease;
+    }
+
+    body.card-active .floating-word {
+      opacity: var(--target-opacity);
+      transform: translate(var(--target-x), var(--target-y)) scale(1);
     }
   </style>
 </head>
@@ -353,6 +410,9 @@
 
   <!-- Dynamic Scrolling Media Background -->
   <div class="background-panel" id="scrollingPanel"></div>
+
+  <!-- Floating Words Layer -->
+  <div class="floating-words-layer" id="wordsLayer"></div>
 
   <!-- Cinematic Vignette -->
   <div class="vignette"></div>
@@ -375,7 +435,9 @@
 
         <div class="card-body">
           <p class="bio">
-            I build things - spaces, communities, and the bridges between them.
+            I build things - spaces, communities, and the bridges between them.<br>
+            Currently studying B.Sc. Computer Science and Entrepreneurship at <a href="https://www.ashoka.edu.in/"
+              target="_blank" class="edu-link">Ashoka University</a>
           </p>
 
           <div class="contact-grid">
@@ -398,8 +460,8 @@
         </div>
 
         <div class="actions">
-          <a href="under-construction.html" class="btn-primary">Enter Portfolio →</a>
-          <a href="#" class="btn-secondary">Download Résumé</a>
+          <a href="portfolio.html" class="btn-primary">Enter Portfolio →</a>
+          <a href="resume.pdf" download class="btn-secondary">Download Résumé</a>
         </div>
       </div>
 
@@ -462,6 +524,57 @@
     }
 
     buildGrid();
+
+    // ── Floating Words Generator ──
+    const wordData = [
+      { text: 'designing', scale: 1, x: -38, y: -32, r: -5 },
+      { text: 'Events', scale: 1, x: -42, y: 2, r: 0 },
+      { text: 'Films', scale: 1, x: -35, y: 35, r: 10 },
+      { text: 'Ventures', scale: 0.75, x: -12, y: 40, r: -4 },
+      { text: 'Music', scale: 0.75, x: 12, y: 41, r: 5 },
+      { text: 'Cooking', scale: 0.5, x: 38, y: 34, r: -8 },
+      { text: 'Code', scale: 1, x: 44, y: 10, r: 12 },
+      { text: 'Travel', scale: 0.5, x: 42, y: -18, r: -5 },
+      { text: 'animations', scale: 0.66, x: 34, y: -36, r: 8 },
+      { text: 'cinematography', scale: 0.66, x: 10, y: -42, r: -2 },
+      { text: 'news', scale: 0.5, x: -15, y: -40, r: 3 },
+      { text: 'politics', scale: 0.5, x: 32, y: 24, r: 6 },
+      { text: 'Communities', scale: 0.8, x: -28, y: -38, r: -10 },
+      { text: 'Open Source', scale: 1, x: -44, y: -18, r: 15 }
+    ];
+    const wordsLayer = document.getElementById('wordsLayer');
+
+    function spawnWords() {
+      const baseX = 46; // Reduced base size for a cleaner look
+
+      wordData.forEach((item, i) => {
+        const word = document.createElement('div');
+        word.className = 'floating-word';
+        word.textContent = item.text;
+
+        const size = baseX * item.scale;
+
+        // Use the specific curated coordinates
+        word.style.fontSize = `${size}px`;
+        word.style.setProperty('--target-opacity', 0.2 + (i % 3) * 0.1);
+        word.style.setProperty('--target-x', `calc(-50% + ${item.x}vw)`);
+        word.style.setProperty('--target-y', `calc(-50% + ${item.y}vh)`);
+        word.style.setProperty('--rot', `${item.r}deg`);
+
+        wordsLayer.appendChild(word);
+      });
+    }
+
+    spawnWords();
+
+    // ── Interaction Listeners ──
+    const card = document.querySelector('.visiting-card');
+    card.addEventListener('mouseenter', () => {
+      document.body.classList.add('card-active');
+    });
+    card.addEventListener('mouseleave', () => {
+      document.body.classList.remove('card-active');
+    });
   </script>
 </body>
 
