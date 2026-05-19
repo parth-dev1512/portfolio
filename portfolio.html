@@ -23,6 +23,20 @@
         href="https://www.ashoka.edu.in/" target="_blank">Ashoka University</a></span>
   </header>
 
+  <!-- Media Player Overlay -->
+  <div class="media-overlay" id="mediaOverlay">
+    <div class="vp-box">
+      <button class="vp-close" id="moClose">✕ Close</button>
+      <div class="vp-media-wrap" id="moMediaWrap">
+        <!-- Injected via JS -->
+      </div>
+      <div class="vp-bottom-bar">
+        <button id="moMute" style="display:none;">Mute/Unmute</button>
+        <span id="moLabel">Media Preview</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Control bar -->
   <div class="control-bar">
     <div class="control-header">
@@ -71,10 +85,10 @@
     // ──────────────────────────────────────────────────────────────
     const STOPS = [
       {
-        id: 'creative', label: 'creative', blurb: 'films · designs · photos',
+        id: 'creative', label: 'creative', blurb: 'films · designs · podcast · marketing',
         eyebrow: 'sketchbook', title: 'Creative Chaos', titleFont: '"Caveat", cursive', titleItalic: false,
         subtitle: 'A space for visual storytelling, experiments, and scribbles.',
-        nav: ['films', 'designs', 'photos', 'archive'], navMono: false,
+        nav: ['films', 'designs', 'photos', 'podcast', 'marketing', 'archive'], navMono: false,
         filters: ['all', 'shorts', 'stills', 'layout', 'scribbles'],
         totalCount: 150,
         cols: 1, tileType: 'creative', tileHeight: 120,
@@ -83,10 +97,82 @@
         hintRight: 'keep sketching',
         icon: 'pencil',
         sections: [
-          { id: 'films', title: 'Films', items: ['Short Film: "The Bridge"', 'Music Video: Neon Pulse', 'Experimental: Static Dreams'] },
-          { id: 'designs', title: 'Designs', items: ['Poster: Film Noir Series', 'UX Case Study: PaperFold', 'Logo Set: Retro Future'] },
-          { id: 'photos', title: 'Photos', items: ['Tokyo Streets · 35mm', 'Portrait Series: Dusk', 'Architecture: Monolith'] },
-          { id: 'written', title: 'Written work', items: ['Essay: The Digital Void', 'Poetry: Silicon Heart', 'Article: UI in the 90s'] }
+          {
+            id: 'films', title: 'Films',
+            items: [
+              { label: 'Gali Number Paanch', src: 'creative assets/videos/galiNumberPaanch.mp4', type: 'video' },
+              { label: 'Good Morning', src: 'creative assets/videos/goodMorning.mp4', type: 'video' },
+              { label: 'In The Loop', src: 'creative assets/videos/inTheLoop.mp4', type: 'video' },
+              { label: 'What\'s In The Head', src: 'creative assets/videos/whatsInTheHead.mp4', type: 'video' },
+              { label: 'KCDH Intro', src: 'creative assets/videos/kcdh_intro.mov', type: 'video' },
+              { label: 'KCDH Outro', src: 'creative assets/videos/kcdh_outro.mov', type: 'video' },
+              { label: 'Packed', src: 'creative assets/videos/packed.mp4', type: 'video' }
+            ]
+          },
+          {
+            id: 'designs', title: 'Designs',
+            items: [
+              { label: 'Newspaper Mockup', src: 'creative assets/designs/Free Newspaper Mockup.png', type: 'image' },
+              { label: 'Magazine Mockup', src: 'creative assets/designs/Free Open Magazine PSD Mockup.png', type: 'image' },
+              { label: 'ID Card Mockup', src: 'creative assets/designs/id card mockup 2.png', type: 'image' },
+              { label: 'Asset 01', src: 'creative assets/designs/image.png', type: 'image' },
+              { label: 'Asset 02', src: 'creative assets/designs/image 2.png', type: 'image' },
+              { label: 'Asset 03', src: 'creative assets/designs/image 3.png', type: 'image' },
+              { label: 'Letter Mockup', src: 'creative assets/designs/letter mockup.png', type: 'image' },
+              { label: 'Logo Mockup', src: 'creative assets/designs/paper logo mockup.png', type: 'image' }
+            ]
+          },
+          {
+            id: 'photos', title: 'Photos',
+            layout: 'revolving',
+            items: [
+              { src: 'creative assets/photos/00-1.jpg' },
+              { src: 'creative assets/photos/00.jpg' },
+              { src: 'creative assets/photos/10-1.jpg' },
+              { src: 'creative assets/photos/10.jpg' },
+              { src: 'creative assets/photos/1000086045.jpg' },
+              { src: 'creative assets/photos/1000086093.jpg' },
+              { src: 'creative assets/photos/20.jpg' },
+              { src: 'creative assets/photos/30-1.jpg' },
+              { src: 'creative assets/photos/40.jpg' },
+              { src: 'creative assets/photos/AAGjZJwFQ24_1777607633817.png' },
+              { src: 'creative assets/photos/AAGjZJwFQ24_1777607901406.png' },
+              { src: 'creative assets/photos/DSC01119.JPG' },
+              { src: 'creative assets/photos/DSC01194.JPG' },
+              { src: 'creative assets/photos/DSC01198.JPG' },
+              { src: 'creative assets/photos/DSC01218.JPG' },
+              { src: 'creative assets/photos/DSC01233.JPG' },
+              { src: 'creative assets/photos/DSC01244.JPG' },
+              { src: 'creative assets/photos/DSC01558.JPG' },
+              { src: 'creative assets/photos/DSC02954.JPG' },
+              { src: 'creative assets/photos/DSC03003.JPG' },
+              { src: 'creative assets/photos/DSC03158.JPG' },
+              { src: 'creative assets/photos/DSC03183.JPG' },
+              { src: 'creative assets/photos/DSC03195.JPG' },
+              { src: 'creative assets/photos/DSC03220.JPG' },
+              { src: 'creative assets/photos/DSC03256.JPG' },
+              { src: 'creative assets/photos/DSC03257.JPG' },
+              { src: 'creative assets/photos/DSC07969.JPG' },
+              { src: 'creative assets/photos/DSC07999.JPG' },
+              { src: 'creative assets/photos/DSC08059.JPG' },
+              { src: 'creative assets/photos/DSC08060.JPG' },
+              { src: 'creative assets/photos/DSC08063.JPG' },
+              { src: 'creative assets/photos/DSC08089.JPG' },
+              { src: 'creative assets/photos/DSC08125.JPG' },
+              { src: 'creative assets/photos/DSC_0011.JPG' }
+            ]
+          },
+          {
+            id: 'podcast', title: 'Podcast',
+            layout: 'grid',
+            items: [
+              { title: 'Podcast Episode 01', url: 'https://youtu.be/ENkfBsoeJY0?si=6nTQLiRQ2sgVBVsL', thumb: 'https://img.youtube.com/vi/ENkfBsoeJY0/maxresdefault.jpg' },
+              { title: 'Podcast Episode 02', url: 'https://youtu.be/0yMwjx-dJgE?si=sWt6CAGKRlQb64XI', thumb: 'https://img.youtube.com/vi/0yMwjx-dJgE/maxresdefault.jpg' },
+              { title: 'Podcast Episode 03', url: 'https://youtu.be/PzXHJKAg8Ig?si=GZNcvnewIOWkU_pS', thumb: 'https://img.youtube.com/vi/PzXHJKAg8Ig/maxresdefault.jpg' },
+              { title: 'Podcast Episode 04', url: 'https://youtu.be/jYrEBuLHUMw?si=y6oFTK7nbw_aEM4n', thumb: 'https://img.youtube.com/vi/jYrEBuLHUMw/maxresdefault.jpg' },
+              { title: 'Podcast Episode 05', url: 'https://youtu.be/qjbh1V9Hb8A?si=zrY4fIx8EenEZjF7', thumb: 'https://img.youtube.com/vi/qjbh1V9Hb8A/maxresdefault.jpg' }
+            ]
+          }
         ],
         extraLinks: [
           { label: 'Behance Portfolio', url: '#' },
@@ -107,12 +193,13 @@
         tileAccent: '#98fb98', tileFont: '"Pixelify Sans", sans-serif',
         hintRight: '[IDLE_SYSTEM]',
         icon: 'brackets',
+        githubUrl: 'https://github.com/parth-dev1512',
         projects: [
-          { name: 'International Trade Journal', preview: 'code assets/trade_journal_ss.png', desc: 'A platform created for the Ashoka Society for International Trade and Foregin Policy to post their blogs.', tags: ['HTML', 'CSS', 'JS'], link: 'ACCESS', url: 'https://astifp.github.io/astifp/blog.html', download: false },
-          { name: 'Nexus', preview: 'code assets/nexus_ss.png', desc: 'Ashoka\'s Skill Sharing Platform: A space for students and faculty to schedule sessions, find courses, and share expertise.', tags: ['React', 'Node.js', 'Firebase'], link: 'ACCESS', url: 'https://nexus-ashoka.vercel.app/', download: false },
-          { name: 'Meme Soundboard', preview: 'code assets/memeboard_ss.jpeg', desc: 'A neo-brutalist meme soundboard application built for Android, featuring quick-access audio pads and custom uploads.', tags: ['Java', 'Android', 'XML'], link: 'DOWNLOAD APK', url: 'code assets/memeboard.apk', download: true },
-          { name: 'ERP System', preview: 'code assets/erp_ss.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['React', 'PostgreSQL', 'Express'], link: '', url: '#', download: false },
-          { name: 'theOtherHand', preview: 'code assets/theOtherhand_ss.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['React', 'PostgreSQL', 'Express'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
+          { name: 'International Trade Journal', preview: 'code assets/trade_journal_ss.png', desc: 'A platform created for the Ashoka Society for International Trade and Foregin Policy to post their blogs.', tags: ['Typescript', 'CSS'], link: 'ACCESS', url: 'https://astifp.github.io/astifp/blog.html', download: false },
+          { name: 'Nexus', preview: 'code assets/nexus_ss.png', desc: 'Ashoka\'s Skill Sharing Platform: A space for students and faculty to schedule sessions, find courses, and share expertise.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://nexus-ashoka.vercel.app/', download: false },
+          { name: 'Meme Soundboard', preview: 'code assets/memeboard_ss.jpeg', desc: 'A neo-brutalist meme soundboard application built for Android, featuring quick-access audio pads and custom uploads.', tags: ['Java', 'Android'], link: 'DOWNLOAD APK', url: 'code assets/memeboard.apk', download: true },
+          { name: 'ERP System', preview: 'code assets/erp_ss.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
+          { name: 'theOtherHand', preview: 'code assets/theOtherhand_ss.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
         ],
         initiatives: [
           { name: 'Computer Science Society', role: 'President', detail: 'Starting as a member and then eventually as the President of CS Society at Ashoka, we work on building a community of CS driven students and host events and workshops for the same at Ashoka University.' },
@@ -203,7 +290,13 @@
     // ──────────────────────────────────────────────────────────────
     // STATE & KNOB
     // ──────────────────────────────────────────────────────────────
-    let currentStop = 1; // start at 'code'
+    function getStopFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      const idx = STOPS.findIndex(s => s.id === hash);
+      return idx !== -1 ? idx : 1; // Default to 'code'
+    }
+
+    let currentStop = getStopFromHash();
     const TRACK_PAD = 60;
 
     const track = document.getElementById('track');
@@ -266,6 +359,12 @@
       knob.style.left = stopX(currentStop) + 'px';
       updateKnobUI();
       if (!skipRender) renderPreview();
+
+      // Update hash for shareable URLs
+      const newHash = '#' + STOPS[idx].id;
+      if (window.location.hash !== newHash) {
+        window.location.hash = newHash;
+      }
     }
 
     // Drag logic
@@ -336,6 +435,7 @@
     });
 
     let hasLoadedCode = false;
+    let hasLoadedCreative = false;
 
     // ──────────────────────────────────────────────────────────────
     // RENDER PREVIEW
@@ -418,58 +518,188 @@
         });
       });
 
-      // Special case for creative mode accordion
+      // Special case for creative mode gallery
       if (STOPS[currentStop].id === 'creative') {
-        attachAccordionEvents(container);
+        attachCreativeGalleryEvents(container);
+        initPhotoRevolvers(container);
       }
     }
 
-    function attachAccordionEvents(container) {
-      const panels = container.querySelectorAll('.creative-panel');
-      panels.forEach(panel => {
-        const arrow = panel.querySelector('.cp-arrow');
-        if (arrow) {
-          arrow.addEventListener('click', (e) => {
-            e.stopPropagation(); // Don't trigger the panel click if there was one
-            panel.classList.toggle('expanded');
-          });
+    function attachCreativeGalleryEvents(container) {
+      const galleries = container.querySelectorAll('.creative-gallery-container');
+
+      galleries.forEach(gallery => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        gallery.addEventListener('mouseup', (e) => {
+          isDown = false;
+          gallery.style.cursor = 'grab';
+          const x = e.pageX - gallery.offsetLeft;
+          if (Math.abs(x - clickedAtX) < 5) {
+            const card = e.target.closest('.creative-card');
+            if (card) {
+              openMediaOverlay(card.dataset.src, card.dataset.type, card.dataset.label);
+            }
+          }
+        });
+
+        let clickedAtX = 0;
+        gallery.addEventListener('mousedown', (e) => {
+          isDown = true;
+          gallery.style.cursor = 'grabbing';
+          startX = e.pageX - gallery.offsetLeft;
+          clickedAtX = e.pageX - gallery.offsetLeft;
+          scrollLeft = gallery.scrollLeft;
+        });
+
+        gallery.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - gallery.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          gallery.scrollLeft = scrollLeft - walk;
+        });
+
+        // Touch events
+        gallery.addEventListener('touchstart', (e) => {
+          isDown = true;
+          startX = e.touches[0].pageX - gallery.offsetLeft;
+          scrollLeft = gallery.scrollLeft;
+        }, { passive: true });
+
+        gallery.addEventListener('touchend', () => {
+          isDown = false;
+        });
+
+        gallery.addEventListener('touchmove', (e) => {
+          if (!isDown) return;
+          const x = e.touches[0].pageX - gallery.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          gallery.scrollLeft = scrollLeft - walk;
+        }, { passive: true });
+      });
+    }
+
+    function openMediaOverlay(src, type, label) {
+      const overlay = document.getElementById('mediaOverlay');
+      const wrap = document.getElementById('moMediaWrap');
+      const labelEl = document.getElementById('moLabel');
+      const muteBtn = document.getElementById('moMute');
+
+      labelEl.textContent = label;
+      wrap.innerHTML = '';
+
+      if (type === 'video') {
+        const video = document.createElement('video');
+        video.src = src;
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        wrap.appendChild(video);
+        muteBtn.style.display = 'block';
+        muteBtn.onclick = () => {
+          video.muted = !video.muted;
+          muteBtn.textContent = video.muted ? "Unmute" : "Mute";
+        };
+      } else {
+        const img = document.createElement('img');
+        img.src = src;
+        wrap.appendChild(img);
+        muteBtn.style.display = 'none';
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function initMediaOverlay() {
+      const overlay = document.getElementById('mediaOverlay');
+      const close = document.getElementById('moClose');
+
+      close.addEventListener('click', () => {
+        overlay.classList.remove('active');
+        document.getElementById('moMediaWrap').innerHTML = '';
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+          document.getElementById('moMediaWrap').innerHTML = '';
         }
       });
     }
 
-    function getRandomDoodles(count) {
-      const colors = ['#780000', '#C1121F', '#003049', '#669BBC'];
-      const doodles = [
-        // Star
-        '<path d="M10,2 L12,8 L18,8 L13,12 L15,18 L10,14 L5,18 L7,12 L2,8 L8,8 Z" />',
-        // Scribble circle
-        '<path d="M10,10 C20,5 35,15 30,30 C25,45 5,35 10,10" />',
-        // Zig zag
-        '<path d="M5,5 L15,15 L5,25 L15,35" />',
-        // Heart
-        '<path d="M50,30 C50,10 10,10 10,40 C10,70 50,90 50,90 C50,90 90,70 90,40 C90,10 50,10 50,30 Z" transform="scale(0.3)"/>',
-        // Arrow
-        '<path d="M5,20 L35,20 M25,10 L35,20 L25,30" />',
-        // Plus/Cross
-        '<path d="M10,20 L30,20 M20,10 L20,30" />'
-      ];
+    initMediaOverlay();
 
-      let html = '';
-      for (let i = 0; i < count; i++) {
-        const d = doodles[Math.floor(Math.random() * doodles.length)];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const top = Math.random() * 90;
-        const left = Math.random() * 90;
-        const rot = Math.random() * 360;
-        const scale = 0.5 + Math.random() * 1.5;
-        html += `
-          <div class="doodle" style="top:${top}%; left:${left}%; transform: rotate(${rot}deg) scale(${scale}); color:${color};">
-            <svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              ${d}
-            </svg>
-          </div>`;
-      }
-      return html;
+    // Photo Revolver Interaction (Grab-to-scroll)
+    function initPhotoRevolvers(container) {
+      const revoContainers = container.querySelectorAll('.photo-revolver-container');
+      revoContainers.forEach(cont => {
+        const rail = cont.querySelector('.photo-revolver');
+        let pos = 0;
+        let isDragging = false;
+        let startX = 0;
+        let basePos = 0;
+
+        // Auto-scroll speed when not dragging
+        let autoSpeed = 0.5;
+
+        cont.style.cursor = 'grab';
+
+        cont.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          cont.style.cursor = 'grabbing';
+          startX = e.clientX;
+          basePos = pos;
+          e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const delta = e.clientX - startX;
+          pos = basePos + delta;
+          updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            cont.style.cursor = 'grab';
+          }
+        });
+
+        function updateTransform() {
+          const halfWidth = rail.scrollWidth / 2;
+          if (pos <= -halfWidth) {
+            pos += halfWidth;
+            if (isDragging) {
+              startX += halfWidth; // Offset startX to prevent jumping while dragging
+              basePos += halfWidth;
+            }
+          }
+          if (pos >= 0) {
+            pos -= halfWidth;
+            if (isDragging) {
+              startX -= halfWidth;
+              basePos -= halfWidth;
+            }
+          }
+          rail.style.transform = `translateX(${pos}px)`;
+        }
+
+        function animate() {
+          if (!isDragging) {
+            pos -= autoSpeed;
+            updateTransform();
+          }
+          requestAnimationFrame(animate);
+        }
+
+        rail.style.animation = 'none'; // Disable CSS animation
+        animate();
+      });
     }
 
     function buildPreview(s) {
@@ -549,25 +779,82 @@
       }
 
       if (s.id === 'creative') {
-        const panelsHtml = s.sections.map((sec, i) => {
-          const color = '#C1121F';
-          return `
-            <div class="creative-panel active" id="panel-${sec.id}">
-              <div class="cp-header">
-                <h2 class="cp-title">${sec.title}</h2>
-                <div class="cp-arrow">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
-                  </svg>
+        const isFirstLoad = !hasLoadedCreative;
+        if (isFirstLoad) hasLoadedCreative = true;
+
+        const rowsHtml = s.sections.map((sec, rowIdx) => {
+          if (sec.layout === 'revolving') {
+            const itemsHtml = sec.items.map(item => {
+              const rot = (Math.random() * 6 - 3).toFixed(1);
+              return `<div class="revolver-item" style="--r: ${rot}deg"><img src="${item.src}" loading="lazy"></div>`;
+            }).join('');
+
+            return `
+              <div class="creative-row">
+                <div class="cr-title-wrap">
+                  <h3 class="cr-title">${sec.title}</h3>
+                </div>
+                <div class="photo-revolver-container">
+                  <div class="photo-revolver">
+                    ${itemsHtml}
+                    ${itemsHtml}
+                  </div>
                 </div>
               </div>
-              <div class="cp-content">
-                <ul class="cp-list">
-                  ${sec.items.map(item => `<li>${item}</li>`).join('')}
-                </ul>
+            `;
+          }
+
+          if (sec.layout === 'grid') {
+            const cardsHtml = sec.items.map(item => `
+              <a href="${item.url}" target="_blank" class="podcast-card">
+                <img src="${item.thumb}" alt="${item.title}" loading="lazy">
+              </a>
+            `).join('');
+
+            return `
+              <div class="creative-row">
+                <div class="cr-title-wrap">
+                  <h3 class="cr-title">${sec.title}</h3>
+                </div>
+                <div class="podcast-grid">
+                  ${cardsHtml}
+                </div>
               </div>
-              <!-- Simple Line Separator -->
-              <div class="cp-line-separator"></div>
+            `;
+          }
+
+          const cardsHtml = sec.items.map((item, itemIdx) => {
+            const mediaTag = item.type === 'video'
+              ? `<video src="${item.src}" autoplay muted loop playsinline></video>`
+              : `<img src="${item.src}" alt="${item.label}" loading="lazy">`;
+
+            const delay = (rowIdx * 0.3) + (itemIdx * 0.15);
+            return `
+              <div class="creative-card ${isFirstLoad ? 'animate-in' : ''}" 
+                   style="${isFirstLoad ? `animation-delay: ${delay}s` : ''}"
+                   data-src="${item.src}" data-type="${item.type}" data-label="${item.label}">
+                <div class="cc-clip">
+                  <div class="cc-clip-hole"></div>
+                </div>
+                <div class="cc-media-wrap">
+                  ${mediaTag}
+                </div>
+                <div class="cc-cap">${item.label}</div>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="creative-row">
+              <div class="cr-title-wrap">
+                <h3 class="cr-title">${sec.title}</h3>
+              </div>
+              <div class="creative-gallery-container">
+                <div class="creative-wire"></div>
+                <div class="creative-gallery">
+                  ${cardsHtml}
+                </div>
+              </div>
             </div>
           `;
         }).join('');
@@ -578,26 +865,15 @@
 
         return `
           <div class="creative-sketch-container">
-            <!-- Background Doodles -->
-            <div class="doodle-layer">
-              ${getRandomDoodles(12)}
-            </div>
-
-            <div class="creative-sketch-list">
-              <div class="cp-line-separator"></div>
-              ${panelsHtml}
+            <div class="creative-sketch-rows">
+              ${rowsHtml}
             </div>
 
             <div class="creative-extra-works">
-              <span class="ce-label">Other creative works I have been part of &rarr;</span>
+              <span class="ce-label">Additional creative pursuits &archive;</span>
               <div class="ce-links">
                 ${extraLinksHtml}
               </div>
-            </div>
-
-            <!-- Foreground Doodles -->
-            <div class="doodle-layer fg">
-              ${getRandomDoodles(6)}
             </div>
           </div>
         `;
@@ -647,6 +923,14 @@
               <div class="pixel-title-wrap">
                 <span class="pixel-eyebrow">${s.eyebrow}</span>
                 <h1 class="pixel-title">${s.title}</h1>
+                ${s.githubUrl ? `
+                  <a href="${s.githubUrl}" target="_blank" class="pixel-hero-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>BROWSE_GITHUB_REPOS</span>
+                  </a>
+                ` : ''}
               </div>
               <div class="pixel-nav">
                 ${s.nav.map(n => `<span class="pn-item">${n}</span>`).join('')}
@@ -811,13 +1095,20 @@
     // INIT
     // ──────────────────────────────────────────────────────────────
     renderStops();
-    setStop(currentStop); // Initialize position
-    renderPreview();
+    setStop(currentStop); // Initialize position and hash
 
     // Re-render stop positions on resize
     window.addEventListener('resize', () => {
       renderStops();
       knob.style.left = stopX(currentStop) + 'px';
+    });
+
+    // Handle back/forward navigation or manual hash changes
+    window.addEventListener('hashchange', () => {
+      const idx = getStopFromHash();
+      if (idx !== currentStop) {
+        setStop(idx);
+      }
     });
   </script>
 </body>
