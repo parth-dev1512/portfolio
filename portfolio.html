@@ -643,39 +643,55 @@
         let startX = 0;
         let basePos = 0;
 
-        // Auto-scroll speed when not dragging
-        let autoSpeed = 0.5;
+        // Auto-scroll speed and direction from data attributes
+        const direction = parseFloat(cont.dataset.direction) || 1;
+        const speed = parseFloat(cont.dataset.speed) || 0.5;
+        let autoSpeed = speed * direction;
 
         cont.style.cursor = 'grab';
 
-        cont.addEventListener('mousedown', (e) => {
+        const onStart = (clientX) => {
           isDragging = true;
           cont.style.cursor = 'grabbing';
-          startX = e.clientX;
+          startX = clientX;
           basePos = pos;
-          e.preventDefault();
-        });
+        };
 
-        window.addEventListener('mousemove', (e) => {
+        const onMove = (clientX) => {
           if (!isDragging) return;
-          const delta = e.clientX - startX;
+          const delta = clientX - startX;
           pos = basePos + delta;
           updateTransform();
-        });
+        };
 
-        window.addEventListener('mouseup', () => {
+        const onEnd = () => {
           if (isDragging) {
             isDragging = false;
             cont.style.cursor = 'grab';
           }
+        };
+
+        cont.addEventListener('mousedown', (e) => {
+          onStart(e.clientX);
+          e.preventDefault();
         });
+        window.addEventListener('mousemove', (e) => onMove(e.clientX));
+        window.addEventListener('mouseup', onEnd);
+
+        // Touch Support
+        cont.addEventListener('touchstart', (e) => {
+          onStart(e.touches[0].clientX);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
+        window.addEventListener('touchend', onEnd);
 
         function updateTransform() {
           const halfWidth = rail.scrollWidth / 2;
+          // Wrap around logic for seamless scroll
           if (pos <= -halfWidth) {
             pos += halfWidth;
             if (isDragging) {
-              startX += halfWidth; // Offset startX to prevent jumping while dragging
+              startX += halfWidth;
               basePos += halfWidth;
             }
           }
@@ -697,7 +713,7 @@
           requestAnimationFrame(animate);
         }
 
-        rail.style.animation = 'none'; // Disable CSS animation
+        rail.style.animation = 'none';
         animate();
       });
     }
@@ -784,9 +800,35 @@
 
         const rowsHtml = s.sections.map((sec, rowIdx) => {
           if (sec.layout === 'revolving') {
-            const itemsHtml = sec.items.map(item => {
-              const rot = (Math.random() * 6 - 3).toFixed(1);
-              return `<div class="revolver-item" style="--r: ${rot}deg"><img src="${item.src}" loading="lazy"></div>`;
+            // Split items into 3 chunks for 3 rows
+            const chunkSize = Math.ceil(sec.items.length / 3);
+            const chunks = [
+              sec.items.slice(0, chunkSize),
+              sec.items.slice(chunkSize, chunkSize * 2),
+              sec.items.slice(chunkSize * 2)
+            ];
+
+            const rowsContent = chunks.map((chunk, idx) => {
+              if (chunk.length === 0) return '';
+
+              // Prepare group of items for this row
+              const itemsHtml = chunk.map(item => {
+                const rot = (Math.random() * 6 - 3).toFixed(1);
+                return `<div class="revolver-item" style="--r: ${rot}deg"><img src="${item.src}" loading="lazy"></div>`;
+              }).join('');
+
+              // Alternate direction and vary speed
+              const direction = (idx % 2 === 0) ? 1 : -1;
+              const speed = 0.3 + (idx * 0.15);
+
+              return `
+                <div class="photo-revolver-container" data-direction="${direction}" data-speed="${speed}">
+                  <div class="photo-revolver">
+                    ${itemsHtml}
+                    ${itemsHtml}
+                  </div>
+                </div>
+              `;
             }).join('');
 
             return `
@@ -794,11 +836,8 @@
                 <div class="cr-title-wrap">
                   <h3 class="cr-title">${sec.title}</h3>
                 </div>
-                <div class="photo-revolver-container">
-                  <div class="photo-revolver">
-                    ${itemsHtml}
-                    ${itemsHtml}
-                  </div>
+                <div class="photo-revolver-stack">
+                  ${rowsContent}
                 </div>
               </div>
             `;

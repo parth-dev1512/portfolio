@@ -1126,9 +1126,15 @@ body {
 }
 
 /* Revolving Photos */
+.photo-revolver-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .photo-revolver-container {
   overflow: hidden;
-  padding: 40px 0;
+  padding: 20px 0;
   width: 100%;
   position: relative;
   mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
@@ -1143,7 +1149,7 @@ body {
 }
 
 .revolver-item {
-  height: 320px;
+  height: 200px;
   flex-shrink: 0;
   background: #fff;
   padding: 5px;
