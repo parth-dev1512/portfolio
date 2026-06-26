@@ -182,7 +182,7 @@
           }
         ],
         extraLinks: [
-          { label: 'Behance Portfolio', url: 'https://www.behance.net/parthagarwal8/' },
+          { label: 'Behance Portfolio', url: 'https://www.behance.net/parthagarwal8/' }
         ]
       },
       {
@@ -214,9 +214,9 @@
         ]
       },
       {
-        id: 'venture', label: 'venture', blurb: 'companies & bets',
+        id: 'venture', label: 'venture', blurb: 'organisations & businesses',
         eyebrow: 'MANIFEST · 004', title: 'VENTURE_LOG', titleFont: '"Pixelify Sans", monospace', titleItalic: false,
-        subtitle: 'A technical inventory of entities, capital allocations, and strategic outcomes.',
+        subtitle: 'A technical inventory of organisations, businesses, and strategic outcomes.',
         nav: ['/FOUNDERS', '/ADVISORY', '/CAPITAL', '/ARCHIVE'], navMono: true,
         filters: ['ACTIVE', 'EXITED', 'HALTED', 'BETA'],
         totalCount: 12,
@@ -227,31 +227,41 @@
         icon: 'compass',
         ventures: [
           {
-            name: 'KOTO',
-            year: '2022',
-            status: 'Live',
-            tagline: 'The Digital Sovereignty Protocol',
-            desc: 'A decentralized social network built on privacy-first interactions and user-owned data graphs. Koto serves as a foundational layer for the next generation of social applications, ensuring that users retain control over their digital identity.',
-            links: [{ label: 'Executive Summary', url: '#' }, { label: 'System Docs', url: '#' }],
-            image: 'venture_koto.png'
-          },
-          {
-            name: 'ORBIT.FM',
-            year: '2023',
-            status: 'Live',
-            tagline: 'Spatial Audio for Creators',
-            desc: 'Orbit is an immersive audio distribution platform that bridges the gap between independent podcasters and high-fidelity sound. Featuring automated spatial mastering and integrated listener analytics.',
-            links: [{ label: 'Launch Platform', url: '#' }, { label: 'Press Release', url: '#' }],
-            image: 'venture_orbit.png'
-          },
-          {
-            name: 'MERIDIAN',
+            name: 'AGILE',
             year: '2020',
-            status: 'Acquired',
-            tagline: 'Agricultural Efficiency Network',
-            desc: 'A logistics engine designed to optimize hyper-local agricultural supply chains. Meridian reduced waste by 40% in test regions before being acquired by AgriTech Global in 2023.',
-            links: [{ label: 'Acquisition Details', url: '#' }],
-            image: 'venture_meridian.png'
+            status: 'Halted',
+            tagline: 'Teenagers centric events',
+            desc: 'A platform for teenagers to connect and engage in fun activities and events.',
+            links: [{ label: 'View Details', url: 'https://www.instagram.com/agile_org_/' }],
+            image: 'ventures/agile.jpg'
+          },
+          {
+            name: 'MOTIFS',
+            year: '2023',
+            status: 'Halted',
+            tagline: 'Office Supplies and Home Decor Brand',
+            desc: 'A brand that creates unique, stylish and customisable office supplies and home decor items.',
+            links: [{ label: 'View Details', url: 'https://www.instagram.com/_.motifs._/' }],
+            image: 'ventures/motifs.jpg'
+          },
+          {
+            name: 'NEXUS',
+            year: '2026',
+            status: 'Building',
+            tagline: 'Ashoka\'s Skill Sharing Platform',
+            desc: 'A platform for students and faculty to schedule sessions, find courses, and share expertise.',
+            links: [{ label: 'The platform', url: 'https://nexus-ashoka.vercel.app/#' }],
+            image: 'ventures/nexus.png'
+          },
+          {
+            name: 'STORIES BY PARTH',
+            year: '2020',
+            status: 'Active',
+            tagline: '',
+            desc: 'A label for stories, with three published books and a running instagram page.',
+            links: [{ label: 'Instagram', url: 'https://www.instagram.com/stories_by_parth/' }, { label: 'Agents of Shield', url: 'https://www.amazon.in/Agents-Shield-Parth-Agarwal/dp/1649513151' }, { label: 'The Sci-Animals', url: 'https://www.amazon.in/Sci-Animals-Agents-Shield-ebook/dp/B08TCBLVHQ?ref_=ast_author_dp&psc=1' }, { label: 'Sir: The Voyage', url: 'https://www.amazon.in/Sir-Voyage-Parth-Agarwal/dp/1649513151' }],
+            image: 'ventures/stories by parth.jpg',
+            gallery: ['ventures/firstbook.jpg', 'ventures/secondbook.jpg', 'ventures/thirdbook.jpg']
           }
         ]
       },
@@ -268,11 +278,10 @@
         hintRight: 'JOIN_THE_CELL',
         icon: 'users',
         clubs: [
-          { name: 'Creative Coding Society', role: 'President', color: '#FFD23F', sticker: '★', detail: 'Curating human-centric code and visual experiments at the edge of the internet.' },
-          { name: 'Midnight Film Club', role: 'Archivist', color: '#9EEAFF', sticker: '●', detail: 'Screening 16mm prints and digital rarities for a small group of curious minds.' },
-          { name: 'The Library Residency', role: 'Resident', color: '#FF6B6B', sticker: '◆', detail: 'A month-long deep dive into speculative fiction and collaborative world-building.' },
-          { name: 'Ashoka Tech Soc', role: 'Member', color: '#B4E64B', sticker: '▲', detail: 'Connecting the dots between ethics, education, and early-stage engineering.' },
-          { name: 'Night Garden', role: 'Organizer', color: '#E599F7', sticker: '✿', detail: 'Secret house parties and garden gatherings with eclectic soundscapes.' }
+          { name: 'Computer Science Society', role: 'Member -> Head of Marketing -> President', color: '#FFD23F', sticker: '', detail: 'Computer Science Society is a student-run organization that promotes the study and appreciation of computer science at Ashoka University.' },
+          { name: 'Tinsukia Model United Nations', role: 'Founder', color: '#9EEAFF', sticker: '', detail: 'The first Model United Nations conference of Upper Assam' },
+          { name: 'Agneepath', role: 'Member -> Head of Events and Logistics', color: '#FF6B6B', sticker: '', detail: 'Agneepath is the Sports fest of Ashoka University, the biggest fest on campus.' },
+
         ]
       },
     ];
@@ -816,9 +825,14 @@
                       <div class="ui-tagline">// ${v.tagline}</div>
                     </div>
                     <p class="ui-desc">${v.desc}</p>
+                    ${v.gallery ? `
+                      <div class="ui-gallery">
+                        ${v.gallery.map(img => `<img src="${img}" alt="gallery image" class="ui-gallery-img">`).join('')}
+                      </div>
+                    ` : ''}
                     <div class="ui-specs">
                       <div class="ui-spec-row"><span>TIMESTAMP:</span> <span>${v.year}</span></div>
-                      <div class="ui-spec-row"><span>OPERATIONAL:</span> <span>TRUE</span></div>
+                      <div class="ui-spec-row"><span>OPERATIONAL:</span> <span>${v.status === 'Active' ? 'TRUE' : 'FALSE'}</span></div>
                       <div class="ui-spec-row"><span>LINK_COUNT:</span> <span>${v.links.length}</span></div>
                     </div>
                     <div class="ui-actions">

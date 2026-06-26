@@ -2449,3 +2449,423 @@ body {
     width: 60px;
   }
 }
+/* Gallery */
+.ui-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+.ui-gallery-img { width: 100%; height: auto; object-fit: cover; border: 1px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); border-radius: 2px; }
+
+/* ══════════════════════════════════════════════════════════════
+   ACHIEVEMENTS SHELF  –  In-page box, always at bottom
+   ══════════════════════════════════════════════════════════════ */
+
+/* (scrolling/float keyframes removed — shelf is now static) */
+
+/* ── Outer shelf wrapper – normal flow ── */
+.achievements-shelf {
+  margin-top: 48px;
+  border: 2px solid #1a1a1a;
+  box-shadow: 4px 5px 0 rgba(0,0,0,0.14);
+  background: #fff;
+  font-family: "Outfit", "Pixelify Sans", sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  overflow: hidden;
+}
+
+/* ── Section header bar ── */
+.shelf-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px;
+  background: #1a1a1a;
+  color: #f6f1e6;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.shelf-header-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+  transition: font-family 0.3s, color 0.3s;
+}
+
+.shelf-header-sub {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #9a9a8a;
+  font-weight: 400;
+  flex: 1;
+  transition: color 0.3s;
+}
+
+.shelf-toggle {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 4px;
+  color: inherit;
+  width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.shelf-toggle:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.5);
+}
+
+.shelf-toggle-arrow {
+  font-size: 9px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+/* ── Shelf body ── */
+.shelf-body {
+  max-height: 800px;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Track wrapper ── */
+.shelf-track-wrap {
+  background: linear-gradient(180deg, #fdf8f2 0%, #ede4d0 100%);
+  transition: background 0.3s ease;
+}
+
+/* ── Static cert grid ── */
+.shelf-track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 22px;
+}
+
+/* ── Individual Certificate ── */
+.shelf-cert {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-shrink: 0;
+  width: 152px;
+  background: #fffdf7;
+  border: 1.5px solid #c8b99a;
+  border-radius: 4px 4px 2px 2px;
+  box-shadow: 2px 3px 0 #c8b99a, inset 0 0 0 1px rgba(200,185,154,0.3);
+  transform: rotate(var(--tilt));
+  transform-origin: bottom center;
+  cursor: default;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s, border-color 0.3s;
+}
+
+.shelf-cert:hover {
+  transform: rotate(0deg) translateY(-10px) scale(1.05);
+  box-shadow: 4px 10px 0 #a0896a, inset 0 0 0 1px rgba(200,185,154,0.5);
+  z-index: 10;
+  animation-play-state: paused;
+}
+
+/* Top ribbon stripe */
+.cert-ribbon {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg, #b8431a 0px, #b8431a 10px, #1a1a1a 10px, #1a1a1a 20px
+  );
+  border-radius: 3px 3px 0 0;
+  transition: background 0.3s;
+}
+
+.cert-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px 6px;
+  flex: 1;
+}
+
+.cert-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cert-body { flex: 1; overflow: hidden; }
+
+.cert-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s, font-family 0.3s;
+}
+
+.cert-sub {
+  font-family: "Outfit", sans-serif;
+  font-size: 8.5px;
+  color: #6a6a6a;
+  margin-top: 2px;
+  line-height: 1.3;
+  white-space: normal;
+  letter-spacing: 0.02em;
+  transition: color 0.3s;
+}
+
+.cert-year {
+  font-family: "Pixelify Sans", monospace;
+  font-size: 8px;
+  color: #b8431a;
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+  transition: color 0.3s;
+}
+
+.cert-seal {
+  font-size: 13px;
+  color: #c8a96a;
+  flex-shrink: 0;
+  align-self: flex-end;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.cert-bottom-bar {
+  height: 4px;
+  background: linear-gradient(90deg, #c8b99a, #e8d8b8, #c8b99a);
+  border-radius: 0 0 2px 2px;
+  transition: background 0.3s;
+}
+
+/* ── Wooden shelf plank ── */
+.shelf-plank { height: 22px; position: relative; }
+
+.shelf-plank-surface {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(180deg, #c8a96a 0%, #b89858 20%, #a87a40 40%, #8a6530 70%, #7a5a30 100%),
+    repeating-linear-gradient(92deg, transparent 0px, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 9px);
+  border-top: 2.5px solid #e8c888;
+  transition: background-image 0.3s;
+}
+
+.shelf-plank-edge {
+  position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 1;
+  background: linear-gradient(90deg, #e8d898 0%, #f0e8a8 20%, #c8a860 50%, #f0e8a8 80%, #d8c888 100%);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODE THEMES FOR ACHIEVEMENTS SHELF
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── CREATIVE MODE — sketchbook / warm hand-drawn ── */
+.mode-creative .achievements-shelf {
+  border: 2px dashed #ff3366;
+  box-shadow: 5px 6px 0 rgba(255,51,102,0.18);
+}
+.mode-creative .shelf-header {
+  background: #fff;
+  color: #1a1a1a;
+  border-bottom: 2px dashed #ff3366;
+}
+.mode-creative .shelf-header-label {
+  font-family: "Caveat", cursive;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #ff3366;
+}
+.mode-creative .shelf-header-sub { color: #6a6a6a; }
+.mode-creative .shelf-toggle {
+  border-color: #ff336640;
+  color: #ff3366;
+}
+.mode-creative .shelf-toggle:hover { background: #ff336610; border-color: #ff3366; }
+.mode-creative .shelf-track-wrap {
+  background: linear-gradient(180deg, #fff9f5 0%, #fde8ec 100%);
+}
+.mode-creative .shelf-track-wrap::before { background: linear-gradient(to right, #fff9f5, transparent); }
+.mode-creative .shelf-track-wrap::after  { background: linear-gradient(to left, #fde8ec, transparent); }
+.mode-creative .shelf-cert {
+  background: #fffaf9;
+  border-color: #ffbcc8;
+  box-shadow: 2px 3px 0 #ffbcc8;
+}
+.mode-creative .shelf-cert:hover { box-shadow: 4px 10px 0 #f08090; }
+.mode-creative .cert-ribbon {
+  background: repeating-linear-gradient(90deg, #ff3366 0px, #ff3366 10px, #fff 10px, #fff 20px);
+}
+.mode-creative .cert-title { font-family: "Caveat", cursive; font-size: 13px; color: #1a1a1a; }
+.mode-creative .cert-year  { color: #ff3366; }
+.mode-creative .cert-seal  { color: #ff3366; }
+.mode-creative .cert-bottom-bar { background: linear-gradient(90deg, #ffbcc8, #ffdde5, #ffbcc8); }
+
+/* ── CODE MODE — terminal / pixel ── */
+.mode-code .achievements-shelf {
+  border: 2px solid #98fb98;
+  box-shadow: 4px 5px 0 rgba(0,0,0,0.4);
+  background: #1a1a1b;
+}
+.mode-code .shelf-header {
+  background: #0e0e0f;
+  color: #98fb98;
+  border-bottom: 1px solid #98fb9840;
+}
+.mode-code .shelf-header-label {
+  font-family: "Pixelify Sans", monospace;
+  color: #98fb98;
+  letter-spacing: 0.2em;
+}
+.mode-code .shelf-header-sub { color: #3a7a3a; }
+.mode-code .shelf-toggle { border-color: #98fb9840; color: #98fb98; }
+.mode-code .shelf-toggle:hover { background: #98fb9818; border-color: #98fb98; }
+.mode-code .shelf-track-wrap {
+  background: linear-gradient(180deg, #1a1a1b 0%, #212123 100%);
+}
+.mode-code .shelf-track-wrap::before { background: linear-gradient(to right, #1a1a1b, transparent); }
+.mode-code .shelf-track-wrap::after  { background: linear-gradient(to left, #212123, transparent); }
+.mode-code .shelf-cert {
+  background: #212123;
+  border: 1.5px solid #98fb9860;
+  box-shadow: 2px 3px 0 #008000;
+}
+.mode-code .shelf-cert:hover {
+  box-shadow: 4px 10px 0 #98fb98;
+  border-color: #98fb98;
+  background: #252527;
+}
+.mode-code .cert-ribbon {
+  background: repeating-linear-gradient(90deg, #98fb98 0px, #98fb98 10px, #1a1a1b 10px, #1a1a1b 20px);
+}
+.mode-code .cert-title { font-family: "Pixelify Sans", monospace; color: #98fb98; font-size: 9px; letter-spacing: 0.08em; }
+.mode-code .cert-sub  { color: #4a7a4a; font-family: ui-monospace, monospace; font-size: 8px; }
+.mode-code .cert-year { color: #98fb98; }
+.mode-code .cert-seal { color: #98fb9870; }
+.mode-code .cert-bottom-bar { background: linear-gradient(90deg, #1a4a1a, #98fb9840, #1a4a1a); }
+/* Pixel grid dot pattern on track */
+.mode-code .shelf-track-wrap::before,
+.mode-code .shelf-track-wrap::after { width: 50px; }
+/* Plank becomes a pixel bar in code mode */
+.mode-code .shelf-plank-surface {
+  background-image: linear-gradient(180deg, #1a4a1a 0%, #0e2a0e 100%),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(152,251,152,0.08) 8px, rgba(152,251,152,0.08) 9px);
+  border-top: 2px solid #98fb98;
+}
+.mode-code .shelf-plank-edge { background: linear-gradient(90deg, #1a4a1a, #98fb9860, #1a4a1a); }
+
+/* ── VENTURE MODE — utility / clean manifesto ── */
+.mode-venture .achievements-shelf {
+  border: 2px solid #1a1a1a;
+  box-shadow: 5px 5px 0 #1a1a1a;
+  background: #f2f2f2;
+}
+.mode-venture .shelf-header {
+  background: #f2f2f2;
+  color: #1a1a1a;
+  border-bottom: 2px solid #1a1a1a;
+}
+.mode-venture .shelf-header-label {
+  font-family: ui-monospace, monospace;
+  color: #1a1a1a;
+  letter-spacing: 0.22em;
+  font-size: 11px;
+}
+.mode-venture .shelf-header-sub { color: #6a6a6a; font-family: ui-monospace, monospace; font-size: 9px; }
+.mode-venture .shelf-toggle { border-color: #1a1a1a; color: #1a1a1a; }
+.mode-venture .shelf-toggle:hover { background: #1a1a1a20; }
+.mode-venture .shelf-track-wrap {
+  background: linear-gradient(180deg, #f8f8f8 0%, #ebebeb 100%);
+}
+.mode-venture .shelf-track-wrap::before { background: linear-gradient(to right, #f8f8f8, transparent); }
+.mode-venture .shelf-track-wrap::after  { background: linear-gradient(to left, #ebebeb, transparent); }
+.mode-venture .shelf-cert {
+  background: #fff;
+  border: 1.5px solid #1a1a1a;
+  box-shadow: 2px 3px 0 #1a1a1a;
+}
+.mode-venture .shelf-cert:hover { box-shadow: 4px 10px 0 #1a1a1a; }
+.mode-venture .cert-ribbon {
+  background: repeating-linear-gradient(90deg, #1a1a1a 0px, #1a1a1a 10px, #d0d0d0 10px, #d0d0d0 20px);
+}
+.mode-venture .cert-title { font-family: ui-monospace, monospace; font-size: 9px; letter-spacing: 0.06em; color: #1a1a1a; }
+.mode-venture .cert-sub  { font-family: ui-monospace, monospace; font-size: 7.5px; color: #6a6a6a; }
+.mode-venture .cert-year { font-family: ui-monospace, monospace; color: #1a1a1a; }
+.mode-venture .cert-seal { color: #1a1a1a; }
+.mode-venture .cert-bottom-bar { background: linear-gradient(90deg, #888, #ccc, #888); }
+.mode-venture .shelf-plank-surface {
+  background-image: linear-gradient(180deg, #888 0%, #555 100%),
+    repeating-linear-gradient(92deg, transparent 0px, transparent 8px, rgba(0,0,0,0.06) 8px, rgba(0,0,0,0.06) 9px);
+  border-top: 2px solid #aaa;
+}
+.mode-venture .shelf-plank-edge { background: linear-gradient(90deg, #aaa, #ddd, #aaa); }
+
+/* ── COMMUNITY MODE — brutalist yellow ── */
+.mode-community .achievements-shelf {
+  border: 3px solid #1a1a1a;
+  box-shadow: 6px 6px 0 #1a1a1a;
+  background: #FFD23F;
+}
+.mode-community .shelf-header {
+  background: #1a1a1a;
+  color: #FFD23F;
+  border-bottom: 3px solid #FFD23F;
+}
+.mode-community .shelf-header-label {
+  font-family: "Outfit", sans-serif;
+  color: #FFD23F;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+}
+.mode-community .shelf-header-sub { color: #a8900a; }
+.mode-community .shelf-toggle { border-color: #FFD23F60; color: #FFD23F; }
+.mode-community .shelf-toggle:hover { background: #FFD23F20; border-color: #FFD23F; }
+.mode-community .shelf-track-wrap {
+  background: linear-gradient(180deg, #FFD23F 0%, #e8be30 100%);
+}
+.mode-community .shelf-track-wrap::before { background: linear-gradient(to right, #FFD23F, transparent); }
+.mode-community .shelf-track-wrap::after  { background: linear-gradient(to left, #e8be30, transparent); }
+.mode-community .shelf-cert {
+  background: #fff;
+  border: 2.5px solid #1a1a1a;
+  box-shadow: 3px 4px 0 #1a1a1a;
+}
+.mode-community .shelf-cert:hover { box-shadow: 5px 12px 0 #1a1a1a; }
+.mode-community .cert-ribbon {
+  background: repeating-linear-gradient(90deg, #FFD23F 0px, #FFD23F 10px, #1a1a1a 10px, #1a1a1a 20px);
+}
+.mode-community .cert-title { font-family: "Outfit", sans-serif; font-size: 10.5px; font-weight: 900; color: #1a1a1a; }
+.mode-community .cert-sub  { font-family: "Outfit", sans-serif; font-size: 8px; color: #3a3a3a; }
+.mode-community .cert-year { color: #1a1a1a; font-family: "Outfit", monospace; }
+.mode-community .cert-seal { color: #FFD23F; }
+.mode-community .cert-bottom-bar { background: linear-gradient(90deg, #FFD23F, #ffe880, #FFD23F); }
+.mode-community .shelf-plank-surface {
+  background-image: linear-gradient(180deg, #a07010 0%, #7a5508 100%),
+    repeating-linear-gradient(92deg, transparent 0px, transparent 8px, rgba(0,0,0,0.06) 8px, rgba(0,0,0,0.06) 9px);
+  border-top: 3px solid #FFD23F;
+}
+.mode-community .shelf-plank-edge { background: linear-gradient(90deg, #FFD23F, #ffe880, #FFD23F); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .shelf-cert { width: 128px; }
+  .shelf-header { padding: 10px 14px; }
+  .shelf-header-sub { display: none; }
+  .cert-title { font-size: 9.5px; }
+  .cert-sub   { font-size: 8px; }
+}
+
+
+
+
