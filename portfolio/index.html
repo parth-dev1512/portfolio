@@ -16,12 +16,15 @@
 
 <body>
 
-  <!-- Site header -->
   <header class="site-header">
     <a href="../index.html" id="backHome">← Landing Page</a>
-    <span class="edu-line">Currently studying B.Sc. Computer Science and Entrepreneurship at <a
-        href="https://www.ashoka.edu.in/" target="_blank">Ashoka University</a></span>
+
+    <span class="edu-line">Currently studying B.Sc. Computer Science and Entrepreneurship and minor in Media Studies at
+      <a href="https://www.ashoka.edu.in/" target="_blank">Ashoka University</a></span>
   </header>
+
+  <!-- Global Dropdowns -->
+  <div id="globalDropdowns" class="global-dropdowns-container"></div>
 
   <!-- Media Player Overlay -->
   <div class="media-overlay" id="mediaOverlay">
@@ -83,6 +86,20 @@
     // ──────────────────────────────────────────────────────────────
     // DATA
     // ──────────────────────────────────────────────────────────────
+    // ── SHARED DATA: Certificates & Contact ──
+    const CERTIFICATES = [
+      { title: 'Basics of Digital Marketing', issuer: 'Google', year: '2022', icon: '' },
+      { title: 'AI Fluency', issuer: 'Anthropic', year: '2026', icon: '' },
+      { title: 'Introduction to MCP', issuer: 'Anthropic', year: '2026', icon: '' },
+      { title: 'Introduction to agent skills', issuer: 'Anthropic', year: '2026', icon: '' },
+    ];
+
+    const CONTACT_LINKS = [
+      { label: 'Email', value: 'parthagarwal1512@gmail.com', url: 'mailto:parthagarwal1512@gmail.com', icon: '✉️' },
+      { label: 'LinkedIn', value: 'Parth Agarwal', url: 'https://www.linkedin.com/in/parth-agarwal1512/', icon: '🔗' },
+      { label: 'Instagram', value: '@parthagarwal429', url: 'https://www.instagram.com/parthagarwal429/', icon: '📸' },
+    ];
+
     const STOPS = [
       {
         id: 'creative', label: 'creative', blurb: 'films · designs · podcast · marketing',
@@ -1060,20 +1077,20 @@
               </div>
             </div>
             
-            <div class="pixel-section">
-              <div class="p-sec-header">
-                <span class="p-sec-title">Featured Projects</span>
-                <div class="p-sec-line"></div>
+            <div class="experience-section">
+              <div class="exp-header">
+                <span class="exp-title">Featured Projects</span>
+                <div class="exp-line"></div>
               </div>
               <div class="pixel-project-grid">
                 ${projectHtml}
               </div>
             </div>
             
-            <div class="pixel-section">
-              <div class="p-sec-header">
-                <span class="p-sec-title">Other Experiences</span>
-                <div class="p-sec-line"></div>
+            <div class="experience-section">
+              <div class="exp-header">
+                <span class="exp-title">Other Experiences</span>
+                <div class="exp-line"></div>
               </div>
               <div class="pixel-ini-list">
                 ${initiativeHtml}
@@ -1212,6 +1229,83 @@
       <span>mode · ${s.label}</span>
       <span>${s.blurb}</span>
     </div>`;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // GLOBAL DROPDOWN COMPONENT INITIALIZATION
+    // ──────────────────────────────────────────────────────────────
+    function initGlobalDropdowns() {
+      const certsHtml = CERTIFICATES.map(c => `
+        <div class="dropdown-cert-item">
+          <span class="dci-title">${c.title}</span>
+          <span class="dci-sub">${c.issuer} · ${c.year}</span>
+        </div>
+      `).join('');
+
+      const contactHtml = CONTACT_LINKS.map(c => `
+        <a href="${c.url}" target="_blank" class="dropdown-contact-item">
+          <span class="dcont-label">${c.label}</span>
+          <span class="dcont-value">
+            <span class="dcont-value-text">${c.value}</span>
+            <span class="dcont-arrow">↗</span>
+          </span>
+        </a>
+      `).join('');
+
+      document.getElementById('globalDropdowns').innerHTML = `
+        <div class="dropdown-group">
+          <div class="dropdown-component control-bar">
+            <div class="dropdown-bar" onclick="toggleDropdown(this)">
+              <span class="dropdown-bar-label">Certificates & Achievements</span>
+              <span class="dropdown-bar-arrow">+</span>
+            </div>
+            <div class="dropdown-body">
+              <div class="dropdown-body-inner">
+                ${certsHtml}
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown-component control-bar">
+            <div class="dropdown-bar" onclick="toggleDropdown(this)">
+              <span class="dropdown-bar-label">Contact</span>
+              <span class="dropdown-bar-arrow">+</span>
+            </div>
+            <div class="dropdown-body">
+              <div class="dropdown-body-inner contact-grid">
+                ${contactHtml}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    initGlobalDropdowns();
+
+    function toggleDropdown(barEl) {
+      const component = barEl.parentElement;
+      const body = component.querySelector('.dropdown-body');
+      const arrow = barEl.querySelector('.dropdown-bar-arrow');
+      const isOpen = component.classList.contains('open');
+
+      if (isOpen) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+          body.style.maxHeight = '0px';
+        });
+        component.classList.remove('open');
+        arrow.textContent = '+';
+      } else {
+        component.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+        arrow.textContent = '−';
+        body.addEventListener('transitionend', function handler() {
+          if (component.classList.contains('open')) {
+            body.style.maxHeight = 'none';
+          }
+          body.removeEventListener('transitionend', handler);
+        });
+      }
     }
 
     // ──────────────────────────────────────────────────────────────
