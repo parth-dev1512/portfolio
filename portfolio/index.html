@@ -306,7 +306,13 @@
     }
 
     let currentStop = getStopFromHash();
-    const TRACK_PAD = 60;
+    function getTrackPad() {
+      const w = window.innerWidth;
+      if (w <= 480) return 22;
+      if (w <= 600) return 32;
+      return 60;
+    }
+    let TRACK_PAD = getTrackPad();
 
     const track = document.getElementById('track');
     const knob = document.getElementById('knob');
@@ -1316,6 +1322,7 @@
 
     // Re-render stop positions on resize
     window.addEventListener('resize', () => {
+      TRACK_PAD = getTrackPad();
       renderStops();
       knob.style.left = stopX(currentStop) + 'px';
     });
