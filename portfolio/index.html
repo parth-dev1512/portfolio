@@ -256,6 +256,7 @@
             desc: 'A label for stories, with three published books and a running instagram page.',
             links: [{ label: 'Instagram', url: 'https://www.instagram.com/stories_by_parth/' }, { label: 'Agents of Shield', url: 'https://www.amazon.in/Agents-Shield-Parth-Agarwal/dp/1649513151' }, { label: 'The Sci-Animals', url: 'https://www.amazon.in/Sci-Animals-Agents-Shield-ebook/dp/B08TCBLVHQ?ref_=ast_author_dp&psc=1' }, { label: 'Sir: The Voyage', url: 'https://www.amazon.in/Sir-Voyage-Parth-Agarwal/dp/1649513151' }],
             image: 'ventures/stories by parth.jpg',
+            imageFit: 'contain',
             gallery: ['ventures/firstbook.jpg', 'ventures/secondbook.jpg', 'ventures/thirdbook.jpg']
           }
         ]
@@ -817,7 +818,7 @@
               <div class="ui-main">
                 <div class="ui-grid">
                   <div class="ui-image-wrap">
-                    <img src="${v.image}" alt="${v.name}" class="ui-img">
+                    <img src="${v.image}" alt="${v.name}" class="ui-img${v.imageFit === 'contain' ? ' ui-img--contain' : ''}">
                     <div class="ui-img-label">${v.name}_ASSET_v1.0</div>
                   </div>
                   <div class="ui-info">

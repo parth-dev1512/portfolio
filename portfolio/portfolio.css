@@ -2440,6 +2440,13 @@ body {
   display: block;
 }
 
+.ui-img--contain {
+  object-fit: contain;
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 .ui-img-label {
   font-size: 9px;
   border-top: 1px solid #000;
