@@ -1,0 +1,15 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Parth Agarwal's Portfolio with Vercel Speed Insights",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": ["portfolio", "speed-insights"],
+  "author": "Parth Agarwal",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
