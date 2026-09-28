@@ -183,10 +183,10 @@
     .tile-song .art {
       flex: 1;
       min-height: 0;
+      width: 100%;
+      object-fit: cover;
       border-radius: 4px;
-      display: grid;
-      place-items: center;
-      font-size: clamp(28px, 3.5vw, 64px);
+      background: #282828;
     }
 
     .tile-song .now {
@@ -471,38 +471,218 @@
       }
     }
 
-    /* ── Floating Words Background Layer ── */
-    .floating-words-layer {
+    /* ── Spotify Music Player (frosted glass pill) ── */
+    .music-player {
       position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 3;
-      overflow: hidden;
-    }
-
-    .floating-word {
-      position: absolute;
-      font-family: 'Bodoni Moda', serif;
-      font-weight: 400;
-      font-style: italic;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 20;
+      width: min(560px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 18px 12px 12px;
+      border-radius: 999px;
       color: #fff;
-      white-space: nowrap;
-      user-select: none;
-      filter: blur(0.3px);
-
-      /* Start hidden behind the card center */
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) scale(0.2);
-      opacity: 0;
-      transition:
-        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.8s ease;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 20px 50px rgba(0, 0, 0, 0.45);
     }
 
-    body.card-active .floating-word {
-      opacity: var(--target-opacity);
-      transform: translate(var(--target-x), var(--target-y)) scale(1);
+    .mp-cover {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      animation: mp-spin 12s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .music-player.playing .mp-cover {
+      animation-play-state: running;
+    }
+
+    @keyframes mp-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .mp-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mp-title {
+      font-size: 17px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mp-source {
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mp-source svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+      fill: currentColor;
+    }
+
+    .mp-source:hover {
+      color: #fff;
+    }
+
+    .mp-progress {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .mp-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      position: relative;
+    }
+
+    /* Bigger hit area for seeking */
+    .mp-bar::before {
+      content: '';
+      position: absolute;
+      inset: -8px 0;
+    }
+
+    .mp-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .mp-controls {
+      display: flex;
+      gap: 8px;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .mp-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .mp-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .mp-btn:active {
+      transform: scale(0.94);
+    }
+
+    .mp-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .mp-btn.mp-play {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .music-player .icon-pause,
+    .music-player.playing .icon-play {
+      display: none;
+    }
+
+    .music-player.playing .icon-pause {
+      display: block;
+    }
+
+    /* The Spotify embed does the actual playback; it stays loaded but out of view */
+    .mp-engine {
+      position: fixed;
+      left: -9999px;
+      bottom: 0;
+      width: 300px;
+      height: 80px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .music-player {
+        bottom: 16px;
+        gap: 12px;
+        padding: 8px 12px 8px 8px;
+      }
+
+      .mp-cover {
+        width: 52px;
+        height: 52px;
+      }
+
+      .mp-title {
+        font-size: 14px;
+      }
+
+      .mp-source {
+        font-size: 11px;
+      }
+
+      .mp-progress {
+        margin-top: 6px;
+        font-size: 10px;
+      }
+
+      .mp-controls {
+        gap: 6px;
+        align-self: center;
+        margin-top: 0;
+      }
+
+      .mp-btn {
+        width: 30px;
+        height: 30px;
+      }
     }
   </style>
 </head>
@@ -511,9 +691,6 @@
 
   <!-- Dynamic Scrolling Media Background -->
   <div class="background-panel" id="scrollingPanel"></div>
-
-  <!-- Floating Words Layer -->
-  <div class="floating-words-layer" id="wordsLayer"></div>
 
   <!-- Cinematic Vignette -->
   <div class="vignette"></div>
@@ -574,8 +751,57 @@
     </div>
   </div>
 
+  <!-- Spotify Music Player: Parth's most-played tracks -->
+  <div class="music-player" id="musicPlayer" role="region" aria-label="Music player">
+    <img class="mp-cover" id="mpCover" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1">
+    <div class="mp-info">
+      <div class="mp-title" id="mpTitle"></div>
+      <a class="mp-source" id="mpSource" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.45-2.14-10.68-1.17a.75.75 0 1 1-.33-1.46c4.63-1.06 8.6-.6 11.77 1.34.35.22.46.68.25 1.04zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.26-2-8.23-2.59-12.09-1.42a.94.94 0 1 1-.54-1.8c4.4-1.33 9.88-.68 13.61 1.62.44.27.58.85.31 1.29zm.13-3.4C15.18 8.3 8.73 8.08 5 9.21a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 11.39-1.05 15.88 1.62a1.12 1.12 0 0 1-1.14 1.93z" />
+        </svg>
+        <span id="mpArtist"></span>
+      </a>
+      <div class="mp-progress">
+        <span id="mpTime">0:00</span>
+        <div class="mp-bar" id="mpBar" role="slider" aria-label="Seek" tabindex="0"><div class="mp-fill" id="mpFill"></div></div>
+        <span id="mpDuration">0:00</span>
+      </div>
+    </div>
+    <div class="mp-controls">
+      <button class="mp-btn" id="mpPrev" aria-label="Previous song">
+        <svg viewBox="0 0 24 24"><path d="M15.5 4.5 8 12l7.5 7.5 1.5-1.5-6-6 6-6z" /></svg>
+      </button>
+      <button class="mp-btn mp-play" id="mpPlay" aria-label="Play">
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z" /></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" /></svg>
+      </button>
+      <button class="mp-btn" id="mpNext" aria-label="Next song">
+        <svg viewBox="0 0 24 24"><path d="M8.5 4.5 7 6l6 6-6 6 1.5 1.5L16 12z" /></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mp-engine" aria-hidden="true"><div id="spotifyEmbed"></div></div>
+
   <!-- Script to generate the scrolling panel of interest photos & tiles -->
   <script>
+    // Parth's most-played tracks on Spotify (snapshot from his account).
+    // `cover` is the album art hash on i.scdn.co, `preview` a 30s clip.
+    const topTracks = [
+      { id: '2KQBM1PYjg2ZpeA5xbTjrJ', title: 'Tutor', artist: 'Cheema Y, Gur Sidhu', cover: 'a7fdc721f4ac2c0415593273', duration: 200258,
+        preview: 'https://p.scdn.co/mp3-preview/3d68421de0e2e11eba4ed1a3ab1606037e7fddfb' },
+      { id: '6dr3eFiOUacmpqVeC8BvQg', title: 'Bernie\'s Chalisa', artist: 'Krishna Das', cover: '8f376166397c20e402be9a72', duration: 610306,
+        preview: 'https://p.scdn.co/mp3-preview/b8deab83c547d56e7a212fe214f47e640a08db13' },
+      { id: '19G7Rxv7SMztrk4Mhpbz03', title: 'Farzi', artist: 'Cheema Y, Gur Sidhu', cover: 'a7fdc721f4ac2c0415593273', duration: 177854,
+        preview: 'https://p.scdn.co/mp3-preview/361e3baa597bb2df7affbe1bf54223c231331616' },
+      { id: '1gSbvgbyq0dyjbF2sq3njt', title: 'The Beast', artist: 'Cheema Y, Gur Sidhu', cover: 'e5ae649f238fb4f4fcbdfb60', duration: 140526,
+        preview: 'https://p.scdn.co/mp3-preview/e4937d2e0301e8f935b4b6544b32d941b91f16cc' },
+      { id: '0WLCXPcaSplNowMmnFNgDd', title: 'Good Luck Charm', artist: 'K.S Makhan, Roach Killa, Aman Hayer', cover: '36b0cee402db81788eeba6e8', duration: 269573,
+        preview: 'https://p.scdn.co/mp3-preview/55e27e6462fabf2f09c3df737ecea7f38270a379' }
+    ];
+
+    const coverUrl = (hash, small) => `https://i.scdn.co/image/ab67616d0000${small ? '4851' : '1e02'}${hash}`;
+
     // Free Unsplash photos (by photo ID), grouped by interest.
     // Each ID resolves via unsplash.com/photos/<id>/download to the actual image.
     const photoTopics = {
@@ -596,7 +822,7 @@
 
     const photoUrl = id => `https://unsplash.com/photos/${id}/download?w=600`;
 
-    // Bollywood movies, Indian memes and songs don't have good stock photos,
+    // Bollywood movies and Indian memes don't have good stock photos,
     // so they're rendered as styled tiles instead.
     const bollywood = [
       { quote: 'Kitne aadmi the?', film: 'Sholay' },
@@ -616,13 +842,6 @@
       { top: 'Ye paisa', bottom: 'mera hai', emoji: '💸', bg: '#27ae60' }
     ];
 
-    const songs = [
-      { title: 'Kesariya', artist: 'Arijit Singh', emoji: '🧡', bg: '#e67e22' },
-      { title: 'Kun Faya Kun', artist: 'A.R. Rahman, Javed Ali', emoji: '🌙', bg: '#34495e' },
-      { title: 'Channa Mereya', artist: 'Arijit Singh', emoji: '💔', bg: '#c0392b' },
-      { title: 'Kal Ho Naa Ho', artist: 'Sonu Nigam', emoji: '🌆', bg: '#2c3e50' },
-      { title: 'Apna Time Aayega', artist: 'Ranveer Singh, DIVINE', emoji: '🎤', bg: '#7f8c8d' }
-    ];
 
     const renderers = {
       photo: id => {
@@ -633,10 +852,10 @@
           <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
       meme: m => `<div class="media-item tile tile-meme" style="height: ${28 + Math.floor(Math.random() * 8)}vh; background: ${m.bg};">
           <div>${m.top}</div><div class="emoji">${m.emoji}</div><div>${m.bottom}</div></div>`,
-      song: s => `<div class="media-item tile tile-song" style="height: ${32 + Math.floor(Math.random() * 6)}vh; --progress: ${20 + Math.floor(Math.random() * 60)}%;">
-          <div class="art" style="background: ${s.bg};">${s.emoji}</div>
-          <div class="now">Now playing</div><div class="title">${s.title}</div>
-          <div class="artist">${s.artist}</div><div class="bar"></div></div>`
+      song: t => `<div class="media-item tile tile-song" style="height: ${32 + Math.floor(Math.random() * 6)}vh; --progress: ${20 + Math.floor(Math.random() * 60)}%;">
+          <img class="art" src="${coverUrl(t.cover)}" alt="" onerror="this.style.visibility='hidden'">
+          <div class="now">Now playing</div><div class="title">${t.title}</div>
+          <div class="artist">${t.artist}</div><div class="bar"></div></div>`
     };
 
     // Every interest gets its own group so each one is guaranteed a spot.
@@ -644,7 +863,7 @@
       ...Object.values(photoTopics).map(ids => ids.map(id => ['photo', id])),
       bollywood.map(b => ['bollywood', b]),
       memes.map(m => ['meme', m]),
-      songs.map(s => ['song', s])
+      topTracks.map(t => ['song', t])
     ];
 
     const shuffle = arr => {
@@ -688,57 +907,136 @@
 
     buildGrid();
 
-    // ── Floating Words Generator ──
-    const wordData = [
-      { text: 'designing', scale: 1, x: -38, y: -32, r: -5 },
-      { text: 'Events', scale: 1, x: -42, y: 2, r: 0 },
-      { text: 'Films', scale: 1, x: -35, y: 35, r: 10 },
-      { text: 'Ventures', scale: 0.75, x: -12, y: 40, r: -4 },
-      { text: 'Music', scale: 0.75, x: 12, y: 41, r: 5 },
-      { text: 'Cooking', scale: 0.5, x: 38, y: 34, r: -8 },
-      { text: 'Code', scale: 1, x: 44, y: 10, r: 12 },
-      { text: 'Travel', scale: 0.5, x: 42, y: -18, r: -5 },
-      { text: 'animations', scale: 0.66, x: 34, y: -36, r: 8 },
-      { text: 'cinematography', scale: 0.66, x: 10, y: -42, r: -2 },
-      { text: 'news', scale: 0.5, x: -15, y: -40, r: 3 },
-      { text: 'politics', scale: 0.5, x: 32, y: 24, r: 6 },
-      { text: 'Communities', scale: 0.8, x: -28, y: -38, r: -10 },
-      { text: 'Open Source', scale: 1, x: -44, y: -18, r: 15 }
-    ];
-    const wordsLayer = document.getElementById('wordsLayer');
+    // ── Spotify Music Player ──
+    // Playback goes through Spotify's embed (full songs for visitors logged in
+    // to Spotify, 30s previews otherwise). If the embed can't load, the 30s
+    // preview clips are played with a plain <audio> element instead.
+    const $ = id => document.getElementById(id);
+    const player = $('musicPlayer');
+    const fmt = ms => {
+      const sec = Math.max(0, Math.floor(ms / 1000));
+      return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    };
 
-    function spawnWords() {
-      const baseX = 46; // Reduced base size for a cleaner look
+    let current = 0;
+    let state = { position: 0, duration: topTracks[0].duration, paused: true };
+    let controller = null;
+    let audio = null;
+    let wantPlay = false; // play as soon as the newly loaded track is ready
+    let advancing = false;
 
-      wordData.forEach((item, i) => {
-        const word = document.createElement('div');
-        word.className = 'floating-word';
-        word.textContent = item.text;
-
-        const size = baseX * item.scale;
-
-        // Use the specific curated coordinates
-        word.style.fontSize = `${size}px`;
-        word.style.setProperty('--target-opacity', 0.2 + (i % 3) * 0.1);
-        word.style.setProperty('--target-x', `calc(-50% + ${item.x}vw)`);
-        word.style.setProperty('--target-y', `calc(-50% + ${item.y}vh)`);
-        word.style.setProperty('--rot', `${item.r}deg`);
-
-        wordsLayer.appendChild(word);
-      });
+    function render() {
+      const t = topTracks[current];
+      $('mpCover').src = coverUrl(t.cover);
+      $('mpTitle').textContent = t.title;
+      $('mpArtist').textContent = t.artist;
+      $('mpSource').href = `https://open.spotify.com/track/${t.id}`;
+      $('mpSource').title = 'Open in Spotify';
     }
 
-    spawnWords();
+    function renderProgress() {
+      const { position, duration, paused } = state;
+      $('mpTime').textContent = fmt(position);
+      $('mpDuration').textContent = fmt(duration);
+      $('mpFill').style.width = duration ? `${Math.min(100, (position / duration) * 100)}%` : '0';
+      player.classList.toggle('playing', !paused);
+      $('mpPlay').setAttribute('aria-label', paused ? 'Play' : 'Pause');
+    }
 
-    // ── Interaction Listeners ──
-    const card = document.querySelector('.visiting-card');
-    card.addEventListener('mouseenter', () => {
-      document.body.classList.add('card-active');
+    function onUpdate(position, duration, paused) {
+      state = { position, duration: duration || state.duration, paused };
+      renderProgress();
+      // Move on to the next top song when one finishes
+      if (duration && position > 0 && position >= duration - 800) advance();
+    }
+
+    function advance() {
+      if (advancing) return;
+      advancing = true;
+      load(current + 1, true);
+      setTimeout(() => { advancing = false; }, 3000);
+    }
+
+    function useAudioFallback() {
+      if (audio) return;
+      audio = new Audio();
+      audio.addEventListener('timeupdate', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, audio.paused));
+      audio.addEventListener('play', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, false));
+      audio.addEventListener('pause', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, true));
+      audio.addEventListener('ended', advance);
+      audio.src = topTracks[current].preview;
+    }
+
+    function load(i, play) {
+      current = (i + topTracks.length) % topTracks.length;
+      const t = topTracks[current];
+      state = { position: 0, duration: t.duration, paused: !play };
+      render();
+      renderProgress();
+      if (controller) {
+        wantPlay = play;
+        controller.loadUri(`spotify:track:${t.id}`);
+        if (play) controller.play();
+      } else {
+        useAudioFallback();
+        audio.src = t.preview;
+        if (play) audio.play().catch(() => {});
+      }
+    }
+
+    function togglePlay() {
+      if (controller) {
+        controller.togglePlay();
+      } else {
+        useAudioFallback();
+        audio.paused ? audio.play().catch(() => {}) : audio.pause();
+      }
+    }
+
+    function seek(fraction) {
+      if (controller) controller.seek((fraction * state.duration) / 1000);
+      else if (audio && audio.duration) audio.currentTime = fraction * audio.duration;
+    }
+
+    $('mpPlay').addEventListener('click', togglePlay);
+    $('mpPrev').addEventListener('click', () => {
+      // Like most players: restart the song unless we're near its start
+      state.position > 3000 ? seek(0) : load(current - 1, !state.paused);
     });
-    card.addEventListener('mouseleave', () => {
-      document.body.classList.remove('card-active');
+    $('mpNext').addEventListener('click', () => load(current + 1, !state.paused));
+    $('mpBar').addEventListener('click', e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      seek((e.clientX - r.left) / r.width);
     });
+    $('mpBar').addEventListener('keydown', e => {
+      const step = 5000 / state.duration;
+      const f = state.position / state.duration;
+      if (e.key === 'ArrowRight') seek(Math.min(1, f + step));
+      if (e.key === 'ArrowLeft') seek(Math.max(0, f - step));
+    });
+
+    render();
+    renderProgress();
+
+    window.onSpotifyIframeApiReady = IFrameAPI => {
+      IFrameAPI.createController(
+        $('spotifyEmbed'),
+        { uri: `spotify:track:${topTracks[current].id}`, width: 300, height: 80 },
+        c => {
+          if (audio && !audio.paused) return; // fallback already in use
+          controller = c;
+          c.addListener('ready', () => {
+            if (wantPlay) c.play();
+            wantPlay = false;
+          });
+          c.addListener('playback_update', ({ data }) => {
+            if (data) onUpdate(data.position, data.duration, data.isPaused);
+          });
+        }
+      );
+    };
   </script>
+  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 </body>
 
 </html>
