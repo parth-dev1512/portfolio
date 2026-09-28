@@ -121,7 +121,7 @@
       background: #222;
     }
 
-    /* ── Text Tiles (Bollywood dialogues, Indian memes, songs) ── */
+    /* ── Text Tiles (Bollywood dialogues, Indian memes) ── */
     .tile {
       display: flex;
       flex-direction: column;
@@ -171,55 +171,6 @@
       font-size: clamp(36px, 4.5vw, 80px);
       -webkit-text-stroke: 0;
       text-shadow: none;
-    }
-
-    .tile-song {
-      background: #121212;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      gap: 0.6vw;
-    }
-
-    .tile-song .art {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      object-fit: cover;
-      border-radius: 4px;
-      background: #282828;
-    }
-
-    .tile-song .now {
-      font-size: clamp(8px, 0.6vw, 11px);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #1db954;
-    }
-
-    .tile-song .title {
-      font-weight: 500;
-      font-size: clamp(12px, 1.1vw, 18px);
-    }
-
-    .tile-song .artist {
-      font-size: clamp(10px, 0.8vw, 14px);
-      color: #b3b3b3;
-    }
-
-    .tile-song .bar {
-      height: 3px;
-      border-radius: 2px;
-      background: #535353;
-      position: relative;
-    }
-
-    .tile-song .bar::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      width: var(--progress, 40%);
-      border-radius: 2px;
-      background: #1db954;
     }
 
     /* ── Cinematic Overlay / Vignette ── */
@@ -471,7 +422,7 @@
       }
     }
 
-    /* ── Spotify Music Player (frosted glass pill) ── */
+    /* ── Music Player (frosted glass pill) ── */
     .card-wrap {
       position: relative;
       width: min(840px, 100%);
@@ -663,6 +614,21 @@
       background: rgba(255, 255, 255, 0.24);
     }
 
+    /* Browser blocked autoplay: nudge the visitor to press play */
+    .music-player.needs-tap .mp-play {
+      animation: mp-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes mp-pulse {
+      0%, 100% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 0 rgba(255, 255, 255, 0.5);
+      }
+
+      50% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 8px rgba(255, 255, 255, 0);
+      }
+    }
+
     .music-player .icon-pause,
     .music-player.playing .icon-play {
       display: none;
@@ -672,13 +638,13 @@
       display: block;
     }
 
-    /* The Spotify embed does the actual playback; it stays loaded but out of view */
+    /* The YouTube player does the actual playback; it stays loaded but out of view */
     .mp-engine {
       position: fixed;
       left: -9999px;
       bottom: 0;
-      width: 300px;
-      height: 80px;
+      width: 200px;
+      height: 200px;
       opacity: 0;
       pointer-events: none;
     }
@@ -800,14 +766,14 @@
 
     </div>
 
-      <!-- Spotify Music Player: Parth's most-played tracks -->
+      <!-- Music Player: plays Parth's YouTube Music playlist -->
       <div class="music-player" id="musicPlayer" role="region" aria-label="Music player">
         <img class="mp-cover" id="mpCover" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1">
         <div class="mp-info">
           <div class="mp-title" id="mpTitle"></div>
-          <a class="mp-source" id="mpSource" target="_blank" rel="noopener">
+          <a class="mp-source" id="mpSource" target="_blank" rel="noopener" title="Open in YouTube Music">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.45-2.14-10.68-1.17a.75.75 0 1 1-.33-1.46c4.63-1.06 8.6-.6 11.77 1.34.35.22.46.68.25 1.04zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.26-2-8.23-2.59-12.09-1.42a.94.94 0 1 1-.54-1.8c4.4-1.33 9.88-.68 13.61 1.62.44.27.58.85.31 1.29zm.13-3.4C15.18 8.3 8.73 8.08 5 9.21a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 11.39-1.05 15.88 1.62a1.12 1.12 0 0 1-1.14 1.93z" />
+              <path fill-rule="evenodd" d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm0 5.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 1.2a5.3 5.3 0 1 0 0 10.6 5.3 5.3 0 0 0 0-10.6zM10 9v6l5-3z" />
             </svg>
             <span id="mpArtist"></span>
           </a>
@@ -833,27 +799,10 @@
     </div>
   </div>
 
-  <div class="mp-engine" aria-hidden="true"><div id="spotifyEmbed"></div></div>
+  <div class="mp-engine" aria-hidden="true"><div id="ytPlayer"></div></div>
 
   <!-- Script to generate the scrolling panel of interest photos & tiles -->
   <script>
-    // Parth's most-played tracks on Spotify (snapshot from his account).
-    // `cover` is the album art hash on i.scdn.co, `preview` a 30s clip.
-    const topTracks = [
-      { id: '2KQBM1PYjg2ZpeA5xbTjrJ', title: 'Tutor', artist: 'Cheema Y, Gur Sidhu', cover: 'a7fdc721f4ac2c0415593273', duration: 200258,
-        preview: 'https://p.scdn.co/mp3-preview/3d68421de0e2e11eba4ed1a3ab1606037e7fddfb' },
-      { id: '6dr3eFiOUacmpqVeC8BvQg', title: 'Bernie\'s Chalisa', artist: 'Krishna Das', cover: '8f376166397c20e402be9a72', duration: 610306,
-        preview: 'https://p.scdn.co/mp3-preview/b8deab83c547d56e7a212fe214f47e640a08db13' },
-      { id: '19G7Rxv7SMztrk4Mhpbz03', title: 'Farzi', artist: 'Cheema Y, Gur Sidhu', cover: 'a7fdc721f4ac2c0415593273', duration: 177854,
-        preview: 'https://p.scdn.co/mp3-preview/361e3baa597bb2df7affbe1bf54223c231331616' },
-      { id: '1gSbvgbyq0dyjbF2sq3njt', title: 'The Beast', artist: 'Cheema Y, Gur Sidhu', cover: 'e5ae649f238fb4f4fcbdfb60', duration: 140526,
-        preview: 'https://p.scdn.co/mp3-preview/e4937d2e0301e8f935b4b6544b32d941b91f16cc' },
-      { id: '0WLCXPcaSplNowMmnFNgDd', title: 'Good Luck Charm', artist: 'K.S Makhan, Roach Killa, Aman Hayer', cover: '36b0cee402db81788eeba6e8', duration: 269573,
-        preview: 'https://p.scdn.co/mp3-preview/55e27e6462fabf2f09c3df737ecea7f38270a379' }
-    ];
-
-    const coverUrl = (hash, small) => `https://i.scdn.co/image/ab67616d0000${small ? '4851' : '1e02'}${hash}`;
-
     // Free Unsplash photos (by photo ID), grouped by interest.
     // Each ID resolves via unsplash.com/photos/<id>/download to the actual image.
     const photoTopics = {
@@ -903,19 +852,14 @@
       bollywood: b => `<div class="media-item tile tile-bollywood" style="height: ${26 + Math.floor(Math.random() * 8)}vh;">
           <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
       meme: m => `<div class="media-item tile tile-meme" style="height: ${28 + Math.floor(Math.random() * 8)}vh; background: ${m.bg};">
-          <div>${m.top}</div><div class="emoji">${m.emoji}</div><div>${m.bottom}</div></div>`,
-      song: t => `<div class="media-item tile tile-song" style="height: ${32 + Math.floor(Math.random() * 6)}vh; --progress: ${20 + Math.floor(Math.random() * 60)}%;">
-          <img class="art" src="${coverUrl(t.cover)}" alt="" onerror="this.style.visibility='hidden'">
-          <div class="now">Now playing</div><div class="title">${t.title}</div>
-          <div class="artist">${t.artist}</div><div class="bar"></div></div>`
+          <div>${m.top}</div><div class="emoji">${m.emoji}</div><div>${m.bottom}</div></div>`
     };
 
     // Every interest gets its own group so each one is guaranteed a spot.
     const groups = [
       ...Object.values(photoTopics).map(ids => ids.map(id => ['photo', id])),
       bollywood.map(b => ['bollywood', b]),
-      memes.map(m => ['meme', m]),
-      topTracks.map(t => ['song', t])
+      memes.map(m => ['meme', m])
     ];
 
     const shuffle = arr => {
@@ -959,136 +903,138 @@
 
     buildGrid();
 
-    // ── Spotify Music Player ──
-    // Playback goes through Spotify's embed (full songs for visitors logged in
-    // to Spotify, 30s previews otherwise). If the embed can't load, the 30s
-    // preview clips are played with a plain <audio> element instead.
+    // ── Music Player (YouTube Music playlist) ──
+    // Paste the playlist ID from the YouTube Music share link
+    // (music.youtube.com/playlist?list=<THIS PART>). The playlist must be
+    // public or unlisted.
+    const PLAYLIST_ID = 'RDCLAK5uy_ll4D8yhbz6dYK6YjLF5p0MJHX4J-hgGJw';
+
+    // Every hover starts a random song from the playlist. Playback runs through
+    // the YouTube IFrame Player API, kept out of view behind the custom UI.
     const $ = id => document.getElementById(id);
     const player = $('musicPlayer');
-    const fmt = ms => {
-      const sec = Math.max(0, Math.floor(ms / 1000));
-      return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    const fmt = s => {
+      s = Math.max(0, Math.floor(s || 0));
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
     };
 
-    let current = 0;
-    let state = { position: 0, duration: topTracks[0].duration, paused: true };
-    let controller = null;
-    let audio = null;
-    let wantPlay = false; // play as soon as the newly loaded track is ready
-    let advancing = false;
+    let yt = null;
+    let ready = false;
+    let pendingRandom = false;
+    let tick = null;
 
-    function render() {
-      const t = topTracks[current];
-      $('mpCover').src = coverUrl(t.cover);
-      $('mpTitle').textContent = t.title;
-      $('mpArtist').textContent = t.artist;
-      $('mpSource').href = `https://open.spotify.com/track/${t.id}`;
-      $('mpSource').title = 'Open in Spotify';
+    const isPlaying = () => ready && yt.getPlayerState() === YT.PlayerState.PLAYING;
+
+    function renderTrack() {
+      const data = yt && yt.getVideoData ? yt.getVideoData() : null;
+      if (!data || !data.video_id) return;
+      $('mpCover').src = `https://i.ytimg.com/vi/${data.video_id}/mqdefault.jpg`;
+      $('mpTitle').textContent = data.title || 'Untitled';
+      // Auto-generated YouTube Music channels are named "<Artist> - Topic"
+      $('mpArtist').textContent = (data.author || '').replace(/ - Topic$/, '');
+      $('mpSource').href = `https://music.youtube.com/watch?v=${data.video_id}&list=${PLAYLIST_ID}`;
     }
 
     function renderProgress() {
-      const { position, duration, paused } = state;
-      $('mpTime').textContent = fmt(position);
-      $('mpDuration').textContent = fmt(duration);
-      $('mpFill').style.width = duration ? `${Math.min(100, (position / duration) * 100)}%` : '0';
-      player.classList.toggle('playing', !paused);
-      $('mpPlay').setAttribute('aria-label', paused ? 'Play' : 'Pause');
+      if (!ready) return;
+      const t = yt.getCurrentTime();
+      const d = yt.getDuration();
+      $('mpTime').textContent = fmt(t);
+      $('mpDuration').textContent = fmt(d);
+      $('mpFill').style.width = d ? `${Math.min(100, (t / d) * 100)}%` : '0';
     }
 
-    function onUpdate(position, duration, paused) {
-      state = { position, duration: duration || state.duration, paused };
-      renderProgress();
-      // Move on to the next top song when one finishes
-      if (duration && position > 0 && position >= duration - 800) advance();
-    }
-
-    function advance() {
-      if (advancing) return;
-      advancing = true;
-      load(current + 1, true);
-      setTimeout(() => { advancing = false; }, 3000);
-    }
-
-    function useAudioFallback() {
-      if (audio) return;
-      audio = new Audio();
-      audio.addEventListener('timeupdate', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, audio.paused));
-      audio.addEventListener('play', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, false));
-      audio.addEventListener('pause', () => onUpdate(audio.currentTime * 1000, audio.duration * 1000, true));
-      audio.addEventListener('ended', advance);
-      audio.src = topTracks[current].preview;
-    }
-
-    function load(i, play) {
-      current = (i + topTracks.length) % topTracks.length;
-      const t = topTracks[current];
-      state = { position: 0, duration: t.duration, paused: !play };
-      render();
-      renderProgress();
-      if (controller) {
-        wantPlay = play;
-        controller.loadUri(`spotify:track:${t.id}`);
-        if (play) controller.play();
-      } else {
-        useAudioFallback();
-        audio.src = t.preview;
-        if (play) audio.play().catch(() => {});
+    function playRandom() {
+      if (!ready) {
+        pendingRandom = true;
+        return;
       }
-    }
-
-    function togglePlay() {
-      if (controller) {
-        controller.togglePlay();
-      } else {
-        useAudioFallback();
-        audio.paused ? audio.play().catch(() => {}) : audio.pause();
+      const list = yt.getPlaylist() || [];
+      if (!list.length) {
+        pendingRandom = true; // playlist not loaded yet – retry once it cues
+        return;
       }
+      yt.playVideoAt(Math.floor(Math.random() * list.length));
+      // Browsers only allow sound after the visitor has clicked somewhere on the
+      // page, so a hover alone may be blocked. If so, pulse the play button.
+      setTimeout(() => {
+        const st = yt.getPlayerState();
+        player.classList.toggle('needs-tap', st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING);
+      }, 1500);
     }
 
-    function seek(fraction) {
-      if (controller) controller.seek((fraction * state.duration) / 1000);
-      else if (audio && audio.duration) audio.currentTime = fraction * audio.duration;
+    function onStateChange(e) {
+      const S = YT.PlayerState;
+      if (e.data === S.CUED && pendingRandom) {
+        pendingRandom = false;
+        playRandom();
+      }
+      const playing = e.data === S.PLAYING;
+      player.classList.toggle('playing', playing);
+      $('mpPlay').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      if (playing) player.classList.remove('needs-tap');
+      renderTrack();
+      renderProgress();
+      clearInterval(tick);
+      if (playing) tick = setInterval(renderProgress, 500);
     }
 
-    $('mpPlay').addEventListener('click', togglePlay);
-    $('mpPrev').addEventListener('click', () => {
-      // Like most players: restart the song unless we're near its start
-      state.position > 3000 ? seek(0) : load(current - 1, !state.paused);
+    // Start a random song whenever the card is hovered (unless one is already playing)
+    document.querySelector('.card-wrap').addEventListener('mouseenter', () => {
+      if (!isPlaying()) playRandom();
     });
-    $('mpNext').addEventListener('click', () => load(current + 1, !state.paused));
+
+    $('mpPlay').addEventListener('click', () => {
+      if (!ready) return;
+      if (isPlaying()) yt.pauseVideo();
+      else if (!yt.getVideoData().video_id) playRandom();
+      else yt.playVideo();
+    });
+    $('mpPrev').addEventListener('click', () => {
+      if (!ready) return;
+      // Like most players: restart the song unless we're near its start
+      yt.getCurrentTime() > 3 ? yt.seekTo(0, true) : yt.previousVideo();
+    });
+    $('mpNext').addEventListener('click', () => ready && yt.nextVideo());
+
+    const seek = fraction => ready && yt.seekTo(fraction * yt.getDuration(), true);
     $('mpBar').addEventListener('click', e => {
       const r = e.currentTarget.getBoundingClientRect();
       seek((e.clientX - r.left) / r.width);
     });
     $('mpBar').addEventListener('keydown', e => {
-      const step = 5000 / state.duration;
-      const f = state.position / state.duration;
-      if (e.key === 'ArrowRight') seek(Math.min(1, f + step));
-      if (e.key === 'ArrowLeft') seek(Math.max(0, f - step));
+      if (!ready) return;
+      const d = yt.getDuration();
+      if (!d) return;
+      const f = yt.getCurrentTime() / d;
+      if (e.key === 'ArrowRight') seek(Math.min(1, f + 5 / d));
+      if (e.key === 'ArrowLeft') seek(Math.max(0, f - 5 / d));
     });
 
-    render();
-    renderProgress();
+    $('mpTitle').textContent = 'My playlist';
+    $('mpArtist').textContent = 'YouTube Music';
+    $('mpSource').href = `https://music.youtube.com/playlist?list=${PLAYLIST_ID}`;
 
-    window.onSpotifyIframeApiReady = IFrameAPI => {
-      IFrameAPI.createController(
-        $('spotifyEmbed'),
-        { uri: `spotify:track:${topTracks[current].id}`, width: 300, height: 80 },
-        c => {
-          if (audio && !audio.paused) return; // fallback already in use
-          controller = c;
-          c.addListener('ready', () => {
-            if (wantPlay) c.play();
-            wantPlay = false;
-          });
-          c.addListener('playback_update', ({ data }) => {
-            if (data) onUpdate(data.position, data.duration, data.isPaused);
-          });
+    window.onYouTubeIframeAPIReady = () => {
+      yt = new YT.Player('ytPlayer', {
+        width: 200,
+        height: 200,
+        playerVars: { listType: 'playlist', list: PLAYLIST_ID, controls: 0, playsinline: 1 },
+        events: {
+          onReady: () => {
+            ready = true;
+            yt.setLoop(true);
+            if (pendingRandom && (yt.getPlaylist() || []).length) {
+              pendingRandom = false;
+              playRandom();
+            }
+          },
+          onStateChange
         }
-      );
+      });
     };
   </script>
-  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  <script src="https://www.youtube.com/iframe_api" async></script>
 </body>
 
 </html>
