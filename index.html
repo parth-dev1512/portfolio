@@ -121,6 +121,107 @@
       background: #222;
     }
 
+    /* ── Text Tiles (Bollywood dialogues, Indian memes, songs) ── */
+    .tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.4vw;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .tile-bollywood {
+      background: linear-gradient(160deg, #6b0f1a 0%, #2b0508 100%);
+      color: #f5c542;
+      font-family: 'Bodoni Moda', serif;
+      text-align: center;
+      border: 2px solid #f5c542;
+    }
+
+    .tile-bollywood .quote {
+      font-style: italic;
+      font-size: clamp(14px, 1.6vw, 28px);
+      line-height: 1.25;
+    }
+
+    .tile-bollywood .film {
+      margin-top: 1vw;
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(9px, 0.7vw, 12px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #fff3cf;
+    }
+
+    .tile-meme {
+      background: #f2f2f2;
+      color: #fff;
+      text-align: center;
+      justify-content: space-between;
+      font-family: Impact, 'Anton', 'Arial Black', sans-serif;
+      text-transform: uppercase;
+      font-size: clamp(14px, 1.6vw, 28px);
+      line-height: 1.1;
+      -webkit-text-stroke: 1px #000;
+      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    }
+
+    .tile-meme .emoji {
+      font-size: clamp(36px, 4.5vw, 80px);
+      -webkit-text-stroke: 0;
+      text-shadow: none;
+    }
+
+    .tile-song {
+      background: #121212;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      gap: 0.6vw;
+    }
+
+    .tile-song .art {
+      flex: 1;
+      min-height: 0;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      font-size: clamp(28px, 3.5vw, 64px);
+    }
+
+    .tile-song .now {
+      font-size: clamp(8px, 0.6vw, 11px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #1db954;
+    }
+
+    .tile-song .title {
+      font-weight: 500;
+      font-size: clamp(12px, 1.1vw, 18px);
+    }
+
+    .tile-song .artist {
+      font-size: clamp(10px, 0.8vw, 14px);
+      color: #b3b3b3;
+    }
+
+    .tile-song .bar {
+      height: 3px;
+      border-radius: 2px;
+      background: #535353;
+      position: relative;
+    }
+
+    .tile-song .bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: var(--progress, 40%);
+      border-radius: 2px;
+      background: #1db954;
+    }
+
     /* ── Cinematic Overlay / Vignette ── */
     .vignette {
       position: fixed;
@@ -473,53 +574,110 @@
     </div>
   </div>
 
-  <!-- Script to generate the unified scrolling panel of photos & videos -->
+  <!-- Script to generate the scrolling panel of interest photos & tiles -->
   <script>
-    const photos = [
-      'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=600&q=80',
-      'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=600&q=80',
-      'https://images.unsplash.com/photo-1549490349-8643362247b5?w=600&q=80',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
-      'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?w=600&q=80',
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80',
-      'https://images.unsplash.com/photo-1481277542470-605612bd2d61?w=600&q=80',
-      'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=600&q=80',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80',
-      'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80'
+    // Free Unsplash photos (by photo ID), grouped by interest.
+    // Each ID resolves via unsplash.com/photos/<id>/download to the actual image.
+    const photoTopics = {
+      coding: ['TfzeRFtlkFA', 'ieic5Tq8YMk', 'cRACIDEesQo', 'v-jFS1AsHXo'],
+      events: ['bo8XlhXNrE8', 'b7gi_rqKxcQ', 'kjyyrbwDc1g', 'AsxOJcsaR4g'],
+      marketing: ['JKUTrJ4vK00', 'yqaskj8lQBE'],
+      designing: ['4UGmm3WRUoQ', 'OuJcIGnWCZI'],
+      keyboard: ['PukZSAi_K5o', 'nGOF1ShyDok'],
+      guitar: ['hUHzaiAHuUc', 'LzktGMv4Hv8', 'kL_wOSKD5Vg'],
+      tableTennis: ['avRgSPyBn7Q', 'gz-vl-BKW-c', 'WdZPKqux5_s'],
+      shooting: ['9J9sDgmfEiE'],
+      writing: ['OpWkMd02u9k'],
+      superheroes: ['EJDhX181nR0', '8B_DYG7Iaa4'],
+      comics: ['lBwsXs4T8jo'],
+      marvel: ['PfCB8599Snk', 'mp295uolfDs', 'je229dO2TFE'],
+      spotify: ['N_xjrdKZPkw', 'fK8n4RwGuEI']
+    };
+
+    const photoUrl = id => `https://unsplash.com/photos/${id}/download?w=600`;
+
+    // Bollywood movies, Indian memes and songs don't have good stock photos,
+    // so they're rendered as styled tiles instead.
+    const bollywood = [
+      { quote: 'Kitne aadmi the?', film: 'Sholay' },
+      { quote: 'Mogambo khush hua!', film: 'Mr. India' },
+      { quote: 'Bade bade deshon mein aisi chhoti chhoti baatein hoti rehti hain, Senorita.', film: 'DDLJ' },
+      { quote: 'Picture abhi baaki hai mere dost.', film: 'Om Shanti Om' },
+      { quote: 'All is well.', film: '3 Idiots' },
+      { quote: 'How\'s the josh?', film: 'Uri' }
     ];
 
-    const videos = [
-      'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
-      'https://assets.mixkit.co/videos/preview/mixkit-ink-swirling-in-water-238-large.mp4',
-      'https://assets.mixkit.co/videos/preview/mixkit-tree-branches-in-the-breeze-1188-large.mp4'
+    const memes = [
+      { top: 'Rasode mein', bottom: 'kaun tha?', emoji: '🍳', bg: '#e74c3c' },
+      { top: 'Binod', bottom: '', emoji: '🧍‍♂️', bg: '#2980b9' },
+      { top: 'Moye moye', bottom: '', emoji: '😭', bg: '#8e44ad' },
+      { top: 'Just looking', bottom: 'like a wow', emoji: '🤩', bg: '#e67e22' },
+      { top: 'Utha le re baba', bottom: 'utha le', emoji: '🙏', bg: '#16a085' },
+      { top: 'Ye paisa', bottom: 'mera hai', emoji: '💸', bg: '#27ae60' }
     ];
+
+    const songs = [
+      { title: 'Kesariya', artist: 'Arijit Singh', emoji: '🧡', bg: '#e67e22' },
+      { title: 'Kun Faya Kun', artist: 'A.R. Rahman, Javed Ali', emoji: '🌙', bg: '#34495e' },
+      { title: 'Channa Mereya', artist: 'Arijit Singh', emoji: '💔', bg: '#c0392b' },
+      { title: 'Kal Ho Naa Ho', artist: 'Sonu Nigam', emoji: '🌆', bg: '#2c3e50' },
+      { title: 'Apna Time Aayega', artist: 'Ranveer Singh, DIVINE', emoji: '🎤', bg: '#7f8c8d' }
+    ];
+
+    const renderers = {
+      photo: id => {
+        const height = 25 + Math.floor(Math.random() * 20);
+        return `<img src="${photoUrl(id)}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="this.remove()">`;
+      },
+      bollywood: b => `<div class="media-item tile tile-bollywood" style="height: ${26 + Math.floor(Math.random() * 8)}vh;">
+          <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
+      meme: m => `<div class="media-item tile tile-meme" style="height: ${28 + Math.floor(Math.random() * 8)}vh; background: ${m.bg};">
+          <div>${m.top}</div><div class="emoji">${m.emoji}</div><div>${m.bottom}</div></div>`,
+      song: s => `<div class="media-item tile tile-song" style="height: ${32 + Math.floor(Math.random() * 6)}vh; --progress: ${20 + Math.floor(Math.random() * 60)}%;">
+          <div class="art" style="background: ${s.bg};">${s.emoji}</div>
+          <div class="now">Now playing</div><div class="title">${s.title}</div>
+          <div class="artist">${s.artist}</div><div class="bar"></div></div>`
+    };
+
+    // Every interest gets its own group so each one is guaranteed a spot.
+    const groups = [
+      ...Object.values(photoTopics).map(ids => ids.map(id => ['photo', id])),
+      bollywood.map(b => ['bollywood', b]),
+      memes.map(m => ['meme', m]),
+      songs.map(s => ['song', s])
+    ];
+
+    const shuffle = arr => {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
 
     const numCols = 5;
+    const itemsPerCol = 5;
     const panel = document.getElementById('scrollingPanel');
 
     function buildGrid() {
       panel.innerHTML = '';
+
+      // One item from every group first, then fill the rest from what's left
+      const pools = groups.map(g => shuffle([...g]));
+      const picked = pools.map(p => p.shift());
+      const leftovers = shuffle(pools.flat());
+      while (picked.length < numCols * itemsPerCol && leftovers.length) {
+        picked.push(leftovers.shift());
+      }
+      shuffle(picked);
+
       for (let i = 0; i < numCols; i++) {
         const col = document.createElement('div');
         col.className = 'media-col ' + (i % 2 === 0 ? 'up' : 'down');
 
-        let items = [];
-        // Generate 5 items per column
-        for (let j = 0; j < 5; j++) {
-          // Inject a video into specific slots for organic mixing
-          if ((i === 1 && j === 2) || (i === 3 && j === 4) || (i === 4 && j === 1)) {
-            const randomVid = videos[Math.floor(Math.random() * videos.length)];
-            // Mix heights to make masonry effect
-            const height = 30 + Math.floor(Math.random() * 15);
-            items.push(`<video class="media-item" style="height: ${height}vh;" autoplay muted loop playsinline>
-                                        <source src="${randomVid}" type="video/mp4">
-                                    </video>`);
-          } else {
-            const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
-            const height = 25 + Math.floor(Math.random() * 20);
-            items.push(`<img src="${randomPhoto}" class="media-item" style="height: ${height}vh;" alt="portfolio background image">`);
-          }
-        }
+        const items = picked
+          .slice(i * itemsPerCol, (i + 1) * itemsPerCol)
+          .map(([type, data]) => renderers[type](data));
 
         const colContent = items.join('');
         // Duplicate the items within the column to allow the CSS translation to repeat seamlessly
