@@ -378,7 +378,10 @@
 
       // Update hash for shareable URLs
       const newHash = '#' + STOPS[idx].id;
-      if (window.location.hash !== newHash) {
+      if (!window.location.hash) {
+        // Filling in the default on first load shouldn't add a history entry
+        history.replaceState(history.state, '', newHash);
+      } else if (window.location.hash !== newHash) {
         window.location.hash = newHash;
       }
     }
