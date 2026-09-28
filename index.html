@@ -473,9 +473,8 @@
       height: 40px;
     }
 
-    /* Slide down on hover, and stay out while a song is playing */
-    .card-wrap:hover .music-player,
-    .music-player.playing {
+    /* Slide down on hover; tuck back behind the card when the cursor leaves */
+    .card-wrap:hover .music-player {
       transform: translate(-50%, 0);
       opacity: 1;
       pointer-events: auto;
@@ -636,6 +635,137 @@
 
     .music-player.playing .icon-pause {
       display: block;
+    }
+
+    /* ── Mini Player (bottom-right, once something has played) ── */
+    .mini-player {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 30;
+      width: 310px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 8px 8px;
+      border-radius: 999px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 14px 34px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      /* Hidden until music has started */
+      transform: translateY(20px) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.3s ease;
+    }
+
+    body.music-on:not(.card-hover) .mini-player {
+      transform: none;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mini-cover {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.1);
+      animation: mp-spin 12s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .mini-player.playing .mini-cover {
+      animation-play-state: running;
+    }
+
+    .mini-meta {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mini-title,
+    .mini-artist {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .mini-artist {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .mini-player .mp-btn {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .mini-player .mp-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .mini-player .mp-close {
+      background: none;
+      border-color: transparent;
+      box-shadow: none;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .mini-player .mp-close:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .mini-player .icon-pause,
+    .mini-player.playing .icon-play {
+      display: none;
+    }
+
+    .mini-player.playing .icon-pause {
+      display: block;
+    }
+
+    /* Thin progress line along the bottom edge */
+    .mini-progress {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 3px;
+      height: 2px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .mini-progress .mp-fill {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Touch / small screens already have the full player pinned at the bottom */
+    @media (hover: none), (max-width: 600px) {
+      .mini-player {
+        display: none;
+      }
     }
 
     /* The YouTube player does the actual playback; it stays loaded but out of view */
@@ -799,6 +929,26 @@
     </div>
   </div>
 
+  <!-- Mini player: appears bottom-right once music has started -->
+  <div class="mini-player" id="miniPlayer" role="region" aria-label="Now playing">
+    <img class="mini-cover" id="miniCover" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1">
+    <div class="mini-meta">
+      <span class="mini-title" id="miniTitle"></span>
+      <span class="mini-artist" id="miniArtist"></span>
+    </div>
+    <button class="mp-btn" id="miniPlay" aria-label="Pause">
+      <svg class="icon-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z" /></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" /></svg>
+    </button>
+    <button class="mp-btn" id="miniNext" aria-label="Next song">
+      <svg viewBox="0 0 24 24"><path d="M8.5 4.5 7 6l6 6-6 6 1.5 1.5L16 12z" /></svg>
+    </button>
+    <button class="mp-btn mp-close" id="miniClose" aria-label="Stop music and close">
+      <svg viewBox="0 0 24 24"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z" /></svg>
+    </button>
+    <div class="mini-progress"><div class="mp-fill" id="miniFill"></div></div>
+  </div>
+
   <div class="mp-engine" aria-hidden="true"><div id="ytPlayer"></div></div>
 
   <!-- Script to generate the scrolling panel of interest photos & tiles -->
@@ -922,6 +1072,8 @@
     let ready = false;
     let pendingRandom = false;
     let tick = null;
+    let closed = false; // visitor stopped the music with the mini player's ×
+    const mini = $('miniPlayer');
 
     const isPlaying = () => ready && yt.getPlayerState() === YT.PlayerState.PLAYING;
 
@@ -933,6 +1085,9 @@
       // Auto-generated YouTube Music channels are named "<Artist> - Topic"
       $('mpArtist').textContent = (data.author || '').replace(/ - Topic$/, '');
       $('mpSource').href = `https://music.youtube.com/watch?v=${data.video_id}&list=${PLAYLIST_ID}`;
+      $('miniCover').src = $('mpCover').src;
+      $('miniTitle').textContent = $('mpTitle').textContent;
+      $('miniArtist').textContent = $('mpArtist').textContent;
     }
 
     function renderProgress() {
@@ -941,7 +1096,7 @@
       const d = yt.getDuration();
       $('mpTime').textContent = fmt(t);
       $('mpDuration').textContent = fmt(d);
-      $('mpFill').style.width = d ? `${Math.min(100, (t / d) * 100)}%` : '0';
+      $('mpFill').style.width = $('miniFill').style.width = d ? `${Math.min(100, (t / d) * 100)}%` : '0';
     }
 
     function playRandom() {
@@ -971,24 +1126,45 @@
       }
       const playing = e.data === S.PLAYING;
       player.classList.toggle('playing', playing);
+      mini.classList.toggle('playing', playing);
       $('mpPlay').setAttribute('aria-label', playing ? 'Pause' : 'Play');
-      if (playing) player.classList.remove('needs-tap');
+      $('miniPlay').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      if (playing) {
+        player.classList.remove('needs-tap');
+        // Once music has started, keep it going and show the mini player
+        // until the visitor closes it
+        closed = false;
+        document.body.classList.add('music-on');
+      }
       renderTrack();
       renderProgress();
       clearInterval(tick);
       if (playing) tick = setInterval(renderProgress, 500);
     }
 
-    // Start a random song whenever the card is hovered (unless one is already playing)
-    document.querySelector('.card-wrap').addEventListener('mouseenter', () => {
-      if (!isPlaying()) playRandom();
+    // Hovering the card starts a random song, unless music is already on
+    // (playing or paused) or the visitor closed it.
+    const cardWrap = document.querySelector('.card-wrap');
+    cardWrap.addEventListener('mouseenter', () => {
+      document.body.classList.add('card-hover');
+      if (!closed && !document.body.classList.contains('music-on') && !isPlaying()) playRandom();
     });
+    cardWrap.addEventListener('mouseleave', () => document.body.classList.remove('card-hover'));
 
-    $('mpPlay').addEventListener('click', () => {
+    function togglePlay() {
       if (!ready) return;
       if (isPlaying()) yt.pauseVideo();
-      else if (!yt.getVideoData().video_id) playRandom();
+      else if (!yt.getVideoData().video_id || closed) playRandom();
       else yt.playVideo();
+    }
+
+    $('mpPlay').addEventListener('click', togglePlay);
+    $('miniPlay').addEventListener('click', togglePlay);
+    $('miniNext').addEventListener('click', () => ready && yt.nextVideo());
+    $('miniClose').addEventListener('click', () => {
+      closed = true;
+      document.body.classList.remove('music-on');
+      if (ready) yt.stopVideo();
     });
     $('mpPrev').addEventListener('click', () => {
       if (!ready) return;
