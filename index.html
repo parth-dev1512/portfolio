@@ -761,11 +761,50 @@
       background: rgba(255, 255, 255, 0.7);
     }
 
-    /* Touch / small screens already have the full player pinned at the bottom */
+    /* Touch / small screens already have the full player pinned at the bottom,
+       except while the portfolio is open over it */
     @media (hover: none), (max-width: 600px) {
-      .mini-player {
+      body:not(.portfolio-open) .mini-player {
         display: none;
       }
+
+      .mini-player {
+        right: 16px;
+        bottom: 16px;
+        width: min(310px, calc(100% - 32px));
+      }
+    }
+
+    /* ── Portfolio overlay ──
+       While music is on, the portfolio opens on top of this page instead of
+       replacing it, so the music keeps playing. */
+    .portfolio-frame {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      z-index: 25;
+      background: #ece6d8;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+
+    body.portfolio-open .portfolio-frame {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* No need to animate the background while it's covered */
+    body.portfolio-open .media-col {
+      animation-play-state: paused;
+    }
+
+    /* Darker frost so the white text stays readable on the light portfolio */
+    body.portfolio-open .mini-player {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.55));
+      border-color: rgba(255, 255, 255, 0.18);
     }
 
     /* The YouTube player does the actual playback; it stays loaded but out of view */
@@ -1166,6 +1205,72 @@
       document.body.classList.remove('music-on');
       if (ready) yt.stopVideo();
     });
+    // ── Keep the music going into the portfolio ──
+    // A normal link would load a new page and stop the music, so while music
+    // is on, the portfolio opens full-screen on top of this page instead. The
+    // address bar still shows /portfolio/ and the browser's back button
+    // returns to the card.
+    const enterLink = document.querySelector('.actions a[href="portfolio/"]');
+    const homeTitle = document.title;
+    const homeUrl = location.href;
+
+    function openPortfolio(push) {
+      let frame = $('portfolioFrame');
+      if (!frame) {
+        frame = document.createElement('iframe');
+        frame.id = 'portfolioFrame';
+        frame.className = 'portfolio-frame';
+        frame.title = 'Portfolio';
+        frame.src = enterLink.href;
+        frame.addEventListener('load', () => {
+          try {
+            const doc = frame.contentDocument;
+            // Landed back on this page inside the overlay: undo that and just close it
+            if (doc.getElementById('musicPlayer')) {
+              frame.src = enterLink.href;
+              goHome();
+              return;
+            }
+            document.title = doc.title || homeTitle;
+            // The portfolio's "← Landing Page" link should close the overlay
+            // rather than load the landing page inside it
+            const back = doc.getElementById('backHome');
+            if (back) back.addEventListener('click', e => {
+              e.preventDefault();
+              goHome();
+            });
+          } catch (e) { }
+        });
+        document.body.appendChild(frame);
+      }
+      document.body.classList.remove('card-hover');
+      requestAnimationFrame(() => document.body.classList.add('portfolio-open'));
+      if (push) history.pushState({ portfolio: true }, '', enterLink.href);
+    }
+
+    function closePortfolio() {
+      document.body.classList.remove('portfolio-open');
+      document.title = homeTitle;
+    }
+
+    function goHome() {
+      closePortfolio();
+      history.pushState(null, '', homeUrl);
+    }
+
+    enterLink.addEventListener('click', e => {
+      // No music playing, or opening in a new tab: behave like a normal link
+      if (!document.body.classList.contains('music-on')) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      openPortfolio(true);
+    });
+
+    window.addEventListener('popstate', e => {
+      if (e.state && e.state.portfolio) openPortfolio(false);
+      else closePortfolio();
+    });
+
     $('mpPrev').addEventListener('click', () => {
       if (!ready) return;
       // Like most players: restart the song unless we're near its start
