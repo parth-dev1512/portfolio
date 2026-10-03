@@ -200,6 +200,7 @@
           { name: 'Meme Soundboard', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/memeboard_ss_wjtfg2.jpg', desc: 'A neo-brutalist meme soundboard application built for Android, featuring quick-access audio pads and custom uploads.', tags: ['Java', 'Android'], link: 'DOWNLOAD APK', url: 'code assets/memeboard.apk', download: true },
           { name: 'ERP System', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/erp_ss_l0wvi4.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
           { name: 'theOtherHand', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/theOtherHand_ss_iuawst.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
+          { name: 'Internship Database', desc: 'An automatic internship database linked to Gmail.', tags: ['Gmail', 'Google Sheets'], link: 'ACCESS', url: 'https://docs.google.com/spreadsheets/d/1eRBWT0UIEe35lysRv1rVdToMhCwosIa0_pOb-aG5hcM/edit?gid=575087873#gid=575087873', download: false },
         ],
         currentProjects: [
           { name: 'CS Society Website', desc: 'Revamping the website for the Computer Science Society of Ashoka University as the President of the society.', progress: 50 },
@@ -211,7 +212,6 @@
           { name: 'Email Tracker', desc: 'An email tracker.', progress: 10 },
           { name: 'One-Click Email Follow-Up', desc: 'A one-click email follow-up button.', progress: 90 },
           { name: 'EasRes', desc: 'An AI-based resume builder.', progress: 50 },
-          { name: 'Internship Database', desc: 'An automatic internship database linked to Gmail.', progress: 0 },
         ],
         initiatives: [
           { name: 'Altudo', role: 'AI Automation Intern', detail: 'Interned on AI automation at Altudo.' },
@@ -1053,7 +1053,7 @@
               </div>
             </div>
             
-            <div class="pc-screen">
+            ${p.preview ? `            <div class="pc-screen">
               <div class="pc-screen-header">
                 <div class="pc-dot"></div>
                 <div class="pc-dot"></div>
@@ -1063,6 +1063,7 @@
                 <img src="${p.preview}" alt="${p.name}">
               </div>
             </div>
+            ` : ''}
 
             <p class="pc-desc">${p.desc}</p>
             <div class="pc-footer">
