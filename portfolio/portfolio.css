@@ -867,6 +867,38 @@ body {
   gap: 30px;
 }
 
+@media (min-width: 1024px) {
+  .pixel-project-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.pc-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pc-progress-bar {
+  flex: 1;
+  height: 12px;
+  background: #1a1a1b;
+  border: 2px solid #333;
+}
+
+.pc-progress-fill {
+  height: 100%;
+  background: #22c55e;
+}
+
+.pc-progress-label {
+  font-size: 13px;
+  color: #22c55e;
+  min-width: 36px;
+  text-align: right;
+}
+
 .pixel-card {
   background: #212123;
   border: 2px solid #333;

@@ -201,6 +201,16 @@
           { name: 'ERP System', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/erp_ss_l0wvi4.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
           { name: 'theOtherHand', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/theOtherHand_ss_iuawst.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
         ],
+        currentProjects: [
+          { name: 'CS Society Website', desc: 'Revamping the website for the Computer Science Society of Ashoka University as the President of the society.', progress: 50 },
+          { name: 'AIFC Website', desc: 'Building the website for the Ashoka Impact Finance Club.', progress: 20 },
+          { name: 'Campus Classroom Booking', desc: 'Integrating a classroom booking feature in Ashoka University\'s app for students.', progress: 10 },
+          { name: 'Organisation Chatbot', desc: 'A chatbot for automating chatrooms for organisations and offices at Ashoka University.', progress: 5 },
+          { name: 'Projection Mapping Game', desc: 'An interactive projection mapping game.', progress: 5 },
+          { name: 'Docket', desc: 'A package of Android and Windows tools for media professionals, starting with an interview assistant and an automatic flagging system for DaVinci Resolve.', progress: 80 },
+          { name: 'Email Tracker', desc: 'An email tracker.', progress: 10 },
+          { name: 'One-Click Email Follow-Up', desc: 'A one-click email follow-up button.', progress: 90 },
+        ],
         initiatives: [
           { name: 'Computer Science Society', role: 'President', detail: 'Starting as a member and then eventually as the President of CS Society at Ashoka, we work on building a community of CS driven students and host events and workshops for the same at Ashoka University.' },
           { name: 'Birlasoft', role: 'Software Testing Intern', detail: 'Worked on testing and quality assurance for enterprise-level software solutions, ensuring high standards of reliability and performance.' },
@@ -1057,6 +1067,19 @@
           </div>
         `).join('');
 
+        const currentHtml = s.currentProjects.map(p => `
+          <div class="pixel-card">
+            <div class="pc-header">
+              <h2 class="pc-name">${p.name}</h2>
+            </div>
+            <p class="pc-desc">${p.desc}</p>
+            <div class="pc-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}" aria-label="${p.name} progress">
+              <div class="pc-progress-bar"><div class="pc-progress-fill" style="width:${p.progress}%"></div></div>
+              <span class="pc-progress-label">${p.progress}%</span>
+            </div>
+          </div>
+        `).join('');
+
         const initiativeHtml = s.initiatives.map(ini => `
           <div class="pixel-ini-card">
             <div class="pic-header">
@@ -1094,6 +1117,16 @@
               </div>
               <div class="pixel-project-grid">
                 ${projectHtml}
+              </div>
+            </div>
+            
+            <div class="experience-section">
+              <div class="exp-header">
+                <span class="exp-title">Current Projects</span>
+                <div class="exp-line"></div>
+              </div>
+              <div class="pixel-project-grid">
+                ${currentHtml}
               </div>
             </div>
             
