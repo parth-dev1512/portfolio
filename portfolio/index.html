@@ -201,6 +201,7 @@
           { name: 'ERP System', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/erp_ss_l0wvi4.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
           { name: 'theOtherHand', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/theOtherHand_ss_iuawst.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
           { name: 'Internship Database', desc: 'An automatic internship database linked to Gmail.', tags: ['Gmail', 'Google Sheets'], link: 'ACCESS', url: 'https://docs.google.com/spreadsheets/d/1eRBWT0UIEe35lysRv1rVdToMhCwosIa0_pOb-aG5hcM/edit?gid=575087873#gid=575087873', download: false },
+          { name: 'Photobooth', desc: 'A photobooth I built in code that can be set up anywhere with just a laptop, a camera and a printer.', tags: ['Photobooth', 'Events'], link: '', url: '#', download: false },
         ],
         currentProjects: [
           { name: 'CS Society Website', desc: 'Revamping the website for the Computer Science Society of Ashoka University as the President of the society.', progress: 50 },
@@ -272,6 +273,14 @@
             image: 'ventures/stories by parth.jpg',
             imageFit: 'contain',
             gallery: ['ventures/firstbook.jpg', 'ventures/secondbook.jpg', 'ventures/thirdbook.jpg']
+          },
+          {
+            name: 'PHOTOBOOTH BY PARTH',
+            year: 'July 2026',
+            status: 'Active',
+            tagline: 'Photobooths for events',
+            desc: 'A business I run that brings a photobooth to events. Powered by software I wrote myself, it sets up anywhere with just a laptop, a camera and a printer. Started in July 2026.',
+            links: []
           }
         ]
       },
@@ -833,11 +842,12 @@
                 <div class="ui-status-tag" data-status="${v.status}">${v.status}</div>
               </div>
               <div class="ui-main">
-                <div class="ui-grid">
-                  <div class="ui-image-wrap">
+                <div class="ui-grid"${v.image ? '' : ' style="grid-template-columns:1fr"'}>
+                  ${v.image ? `<div class="ui-image-wrap">
                     <img src="${v.image}" alt="${v.name}" class="ui-img${v.imageFit === 'contain' ? ' ui-img--contain' : ''}">
                     <div class="ui-img-label">${v.name}_ASSET_v1.0</div>
-                  </div>
+                  </div>`
+                  : ''}
                   <div class="ui-info">
                     <div class="ui-header">
                       <h2 class="ui-title">${v.name}</h2>
