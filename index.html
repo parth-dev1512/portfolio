@@ -884,7 +884,7 @@
     <div class="card-wrap">
     <div class="visiting-card">
       <div class="card-left">
-        <img src="me.jpeg" alt="Portrait" class="profile-pic">
+        <img src="img/me.jpeg" alt="Portrait" class="profile-pic">
       </div>
 
       <div class="card-right">
@@ -1010,7 +1010,15 @@
       spotify: ['N_xjrdKZPkw', 'fK8n4RwGuEI']
     };
 
-    const photoUrl = id => `https://unsplash.com/photos/${id}/download?w=600`;
+    // Photos are served from the local img/ folder as img/<id>.jpg.
+    // Until a file exists there, it falls back to the Unsplash download for that ID.
+    const photoUrl = id => `img/${id}.jpg`;
+    const unsplashUrl = id => `https://unsplash.com/photos/${id}/download?w=600`;
+    const photoFallback = (img, id) => {
+      if (img.dataset.fellBack) { img.remove(); return; }
+      img.dataset.fellBack = '1';
+      img.src = unsplashUrl(id);
+    };
 
     // Bollywood movies and Indian memes don't have good stock photos,
     // so they're rendered as styled tiles instead.
@@ -1036,7 +1044,7 @@
     const renderers = {
       photo: id => {
         const height = 25 + Math.floor(Math.random() * 20);
-        return `<img src="${photoUrl(id)}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="this.remove()">`;
+        return `<img src="${photoUrl(id)}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="photoFallback(this, '${id}')">`;
       },
       bollywood: b => `<div class="media-item tile tile-bollywood" style="height: ${26 + Math.floor(Math.random() * 8)}vh;">
           <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
