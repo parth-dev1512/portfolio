@@ -1046,6 +1046,10 @@
         const height = 25 + Math.floor(Math.random() * 20);
         return `<img src="${photoUrl(id)}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="photoFallback(this, '${id}')">`;
       },
+      pin: url => {
+        const height = 25 + Math.floor(Math.random() * 20);
+        return `<img src="${url}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="this.remove()">`;
+      },
       bollywood: b => `<div class="media-item tile tile-bollywood" style="height: ${26 + Math.floor(Math.random() * 8)}vh;">
           <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
       meme: m => `<div class="media-item tile tile-meme" style="height: ${28 + Math.floor(Math.random() * 8)}vh; background: ${m.bg};">
@@ -1053,7 +1057,7 @@
     };
 
     // Every interest gets its own group so each one is guaranteed a spot.
-    const groups = [
+    let groups = [
       ...Object.values(photoTopics).map(ids => ids.map(id => ['photo', id])),
       bollywood.map(b => ['bollywood', b]),
       memes.map(m => ['meme', m])
@@ -1098,7 +1102,23 @@
       }
     }
 
-    buildGrid();
+    // Use the Pinterest board (via the /api/pins serverless function) when it responds
+    // quickly; otherwise keep the Unsplash photo wall above.
+    async function loadPins() {
+      try {
+        const res = await fetch('/api/pins', { signal: AbortSignal.timeout(2500) });
+        if (!res.ok) return;
+        const { images } = await res.json();
+        if (!images || !images.length) return;
+        groups = [
+          images.map(url => ['pin', url]),
+          bollywood.map(b => ['bollywood', b]),
+          memes.map(m => ['meme', m])
+        ];
+      } catch (e) { /* keep the default groups */ }
+    }
+
+    loadPins().then(buildGrid);
 
     // ── Music Player (YouTube Music playlist) ──
     // Paste the playlist ID from the YouTube Music share link
