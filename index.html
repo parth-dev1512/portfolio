@@ -31,146 +31,14 @@
       color: #000;
     }
 
-    /* ── Scrolling Media Panel Background ── */
-    .background-panel {
+    /* ── Word-cloud Background ── */
+    #wordField {
       position: fixed;
-      /* Oversize the panel slightly to allow angled rotation without showing edges */
-      top: -15%;
-      left: -10%;
-      right: -10%;
-      bottom: -15%;
-      display: flex;
-      gap: 1.5vw;
-      transform: rotate(-4deg) scale(1.05);
-      /* Dynamic slant */
-      opacity: 0.55;
-      /* Dim enough to let the card stand out */
-      pointer-events: none;
-      /* No interaction */
-      z-index: 1;
-      filter: grayscale(30%) contrast(1.1);
-    }
-
-    .media-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5vw;
-    }
-
-    /* Continuous Scroll Animations */
-    @keyframes scroll-up {
-      0% {
-        transform: translateY(0);
-      }
-
-      100% {
-        transform: translateY(-50%);
-      }
-    }
-
-    @keyframes scroll-down {
-      0% {
-        transform: translateY(-50%);
-      }
-
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    .media-col.up {
-      animation: scroll-up linear infinite;
-    }
-
-    .media-col.down {
-      animation: scroll-down linear infinite;
-    }
-
-    /* Speeds and directions for columns */
-    .media-col:nth-child(1) {
-      animation-duration: 90s;
-      animation-name: scroll-up;
-    }
-
-    .media-col:nth-child(2) {
-      animation-duration: 75s;
-      animation-name: scroll-down;
-    }
-
-    .media-col:nth-child(3) {
-      animation-duration: 110s;
-      animation-name: scroll-up;
-    }
-
-    .media-col:nth-child(4) {
-      animation-duration: 85s;
-      animation-name: scroll-down;
-    }
-
-    .media-col:nth-child(5) {
-      animation-duration: 95s;
-      animation-name: scroll-up;
-    }
-
-    .media-item {
+      inset: 0;
       width: 100%;
-      border-radius: 4px;
-      object-fit: cover;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      background: #222;
-    }
-
-    /* ── Text Tiles (Bollywood dialogues, Indian memes) ── */
-    .tile {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 1.4vw;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .tile-bollywood {
-      background: linear-gradient(160deg, #6b0f1a 0%, #2b0508 100%);
-      color: #f5c542;
-      font-family: 'Bodoni Moda', serif;
-      text-align: center;
-      border: 2px solid #f5c542;
-    }
-
-    .tile-bollywood .quote {
-      font-style: italic;
-      font-size: clamp(14px, 1.6vw, 28px);
-      line-height: 1.25;
-    }
-
-    .tile-bollywood .film {
-      margin-top: 1vw;
-      font-family: 'Inter', sans-serif;
-      font-size: clamp(9px, 0.7vw, 12px);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #fff3cf;
-    }
-
-    .tile-meme {
-      background: #f2f2f2;
-      color: #fff;
-      text-align: center;
-      justify-content: space-between;
-      font-family: Impact, 'Anton', 'Arial Black', sans-serif;
-      text-transform: uppercase;
-      font-size: clamp(14px, 1.6vw, 28px);
-      line-height: 1.1;
-      -webkit-text-stroke: 1px #000;
-      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
-    }
-
-    .tile-meme .emoji {
-      font-size: clamp(36px, 4.5vw, 80px);
-      -webkit-text-stroke: 0;
-      text-shadow: none;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
     }
 
     /* ── Cinematic Overlay / Vignette ── */
@@ -402,10 +270,6 @@
       .contact-grid {
         grid-template-columns: 1fr;
         gap: 16px;
-      }
-
-      .background-panel {
-        transform: rotate(-2deg) scale(1.1);
       }
 
       .actions {
@@ -796,11 +660,6 @@
       visibility: visible;
     }
 
-    /* No need to animate the background while it's covered */
-    body.portfolio-open .media-col {
-      animation-play-state: paused;
-    }
-
     /* Darker frost so the white text stays readable on the light portfolio */
     body.portfolio-open .mini-player {
       background: linear-gradient(135deg, rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.55));
@@ -874,7 +733,7 @@
 <body>
 
   <!-- Dynamic Scrolling Media Background -->
-  <div class="background-panel" id="scrollingPanel"></div>
+  <canvas id="wordField" aria-hidden="true"></canvas>
 
   <!-- Cinematic Vignette -->
   <div class="vignette"></div>
@@ -990,115 +849,85 @@
 
   <div class="mp-engine" aria-hidden="true"><div id="ytPlayer"></div></div>
 
-  <!-- Script to generate the scrolling panel of interest photos & tiles -->
+  <!-- Script for the interest word-cloud background -->
   <script>
-    // Free Unsplash photos (by photo ID), grouped by interest.
-    // Each ID resolves via unsplash.com/photos/<id>/download to the actual image.
-    const photoTopics = {
-      coding: ['TfzeRFtlkFA', 'ieic5Tq8YMk', 'cRACIDEesQo', 'v-jFS1AsHXo'],
-      events: ['bo8XlhXNrE8', 'b7gi_rqKxcQ', 'kjyyrbwDc1g', 'AsxOJcsaR4g'],
-      marketing: ['JKUTrJ4vK00', 'yqaskj8lQBE'],
-      designing: ['4UGmm3WRUoQ', 'OuJcIGnWCZI'],
-      keyboard: ['PukZSAi_K5o', 'nGOF1ShyDok'],
-      guitar: ['hUHzaiAHuUc', 'LzktGMv4Hv8', 'kL_wOSKD5Vg'],
-      tableTennis: ['avRgSPyBn7Q', 'gz-vl-BKW-c', 'WdZPKqux5_s'],
-      shooting: ['9J9sDgmfEiE'],
-      writing: ['OpWkMd02u9k'],
-      superheroes: ['EJDhX181nR0', '8B_DYG7Iaa4'],
-      comics: ['lBwsXs4T8jo'],
-      marvel: ['PfCB8599Snk', 'mp295uolfDs', 'je229dO2TFE'],
-      spotify: ['N_xjrdKZPkw', 'fK8n4RwGuEI']
-    };
-
-    // Photos are served from the local img/ folder as img/<id>.jpg.
-    // Until a file exists there, it falls back to the Unsplash download for that ID.
-    const photoUrl = id => `img/${id}.jpg`;
-    const unsplashUrl = id => `https://unsplash.com/photos/${id}/download?w=600`;
-    const photoFallback = (img, id) => {
-      if (img.dataset.fellBack) { img.remove(); return; }
-      img.dataset.fellBack = '1';
-      img.src = unsplashUrl(id);
-    };
-
-    // Bollywood movies and Indian memes don't have good stock photos,
-    // so they're rendered as styled tiles instead.
-    const bollywood = [
-      { quote: 'Kitne aadmi the?', film: 'Sholay' },
-      { quote: 'Mogambo khush hua!', film: 'Mr. India' },
-      { quote: 'Bade bade deshon mein aisi chhoti chhoti baatein hoti rehti hain, Senorita.', film: 'DDLJ' },
-      { quote: 'Picture abhi baaki hai mere dost.', film: 'Om Shanti Om' },
-      { quote: 'All is well.', film: '3 Idiots' },
-      { quote: 'How\'s the josh?', film: 'Uri' }
+// ── Word-cloud background: small scattered words, dim until the cursor is near ──
+    const interestWords = [
+      'coding', 'events', 'marketing', 'designing', 'keyboard', 'guitar',
+      'table tennis', 'shooting', 'writing', 'superheroes', 'comics', 'marvel',
+      'spotify', 'bollywood', 'memes', 'music', 'movies', 'startups', 'design',
+      'branding', 'piano', 'storytelling', 'open source', 'web', 'creativity',
+      'photography', 'playlists', 'gaming', 'cinema', 'sketching'
     ];
 
-    const memes = [
-      { top: 'Rasode mein', bottom: 'kaun tha?', emoji: '🍳', bg: '#e74c3c' },
-      { top: 'Binod', bottom: '', emoji: '🧍‍♂️', bg: '#2980b9' },
-      { top: 'Moye moye', bottom: '', emoji: '😭', bg: '#8e44ad' },
-      { top: 'Just looking', bottom: 'like a wow', emoji: '🤩', bg: '#e67e22' },
-      { top: 'Utha le re baba', bottom: 'utha le', emoji: '🙏', bg: '#16a085' },
-      { top: 'Ye paisa', bottom: 'mera hai', emoji: '💸', bg: '#27ae60' }
-    ];
+    const bgCanvas = document.getElementById('wordField');
+    const bgCtx = bgCanvas.getContext('2d');
+    const BASE_ALPHA = 0.12;   // resting opacity
+    const GLOW_RADIUS = 170;   // px around the cursor that lights up
+    let bgWords = [];
+    let bgW = 0, bgH = 0;
+    const mouse = { x: -9999, y: -9999 };
 
+    function buildWords() {
+      const dpr = window.devicePixelRatio || 1;
+      bgW = window.innerWidth;
+      bgH = window.innerHeight;
+      bgCanvas.width = bgW * dpr;
+      bgCanvas.height = bgH * dpr;
+      bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const renderers = {
-      photo: id => {
-        const height = 25 + Math.floor(Math.random() * 20);
-        return `<img src="${photoUrl(id)}" class="media-item" style="height: ${height}vh;" loading="lazy" alt="" onerror="photoFallback(this, '${id}')">`;
-      },
-      bollywood: b => `<div class="media-item tile tile-bollywood" style="height: ${26 + Math.floor(Math.random() * 8)}vh;">
-          <div class="quote">“${b.quote}”</div><div class="film">— ${b.film}</div></div>`,
-      meme: m => `<div class="media-item tile tile-meme" style="height: ${28 + Math.floor(Math.random() * 8)}vh; background: ${m.bg};">
-          <div>${m.top}</div><div class="emoji">${m.emoji}</div><div>${m.bottom}</div></div>`
-    };
-
-    // Every interest gets its own group so each one is guaranteed a spot.
-    const groups = [
-      ...Object.values(photoTopics).map(ids => ids.map(id => ['photo', id])),
-      bollywood.map(b => ['bollywood', b]),
-      memes.map(m => ['meme', m])
-    ];
-
-    const shuffle = arr => {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    };
-
-    const numCols = 5;
-    const itemsPerCol = 5;
-    const panel = document.getElementById('scrollingPanel');
-
-    function buildGrid() {
-      panel.innerHTML = '';
-
-      // One item from every group first, then fill the rest from what's left
-      const pools = groups.map(g => shuffle([...g]));
-      const picked = pools.map(p => p.shift());
-      const leftovers = shuffle(pools.flat());
-      while (picked.length < numCols * itemsPerCol && leftovers.length) {
-        picked.push(leftovers.shift());
-      }
-      shuffle(picked);
-
-      for (let i = 0; i < numCols; i++) {
-        const col = document.createElement('div');
-        col.className = 'media-col ' + (i % 2 === 0 ? 'up' : 'down');
-
-        const items = picked
-          .slice(i * itemsPerCol, (i + 1) * itemsPerCol)
-          .map(([type, data]) => renderers[type](data));
-
-        const colContent = items.join('');
-        // Duplicate the items within the column to allow the CSS translation to repeat seamlessly
-        col.innerHTML = colContent + colContent;
-        panel.appendChild(col);
+      // Jittered grid so words are scrambled but evenly spread
+      const cell = bgW < 700 ? 90 : 120;
+      bgWords = [];
+      for (let y = 0; y < bgH + cell; y += cell * 0.6) {
+        for (let x = 0; x < bgW + cell; x += cell * 1.3) {
+          bgWords.push({
+            text: interestWords[Math.floor(Math.random() * interestWords.length)],
+            x: x + (Math.random() - 0.5) * cell * 0.9,
+            y: y + (Math.random() - 0.5) * cell * 0.5,
+            rot: (Math.random() - 0.5) * 0.9,
+            size: 10 + Math.random() * 5,
+            drift: Math.random() * Math.PI * 2,
+            glow: 0
+          });
+        }
       }
     }
 
-    buildGrid();
+    function drawWords(t) {
+      bgCtx.clearRect(0, 0, bgW, bgH);
+      bgCtx.textAlign = 'center';
+      bgCtx.textBaseline = 'middle';
+      for (const w of bgWords) {
+        const x = w.x + Math.sin(t / 4000 + w.drift) * 4;
+        const y = w.y + Math.cos(t / 5000 + w.drift) * 4;
+        const d = Math.hypot(x - mouse.x, y - mouse.y);
+        const target = d < GLOW_RADIUS ? Math.pow(1 - d / GLOW_RADIUS, 1.5) : 0;
+        w.glow += (target - w.glow) * 0.12; // ease in and out
+        bgCtx.save();
+        bgCtx.translate(x, y);
+        bgCtx.rotate(w.rot);
+        bgCtx.font = `${w.size}px 'Inter', sans-serif`;
+        bgCtx.fillStyle = `rgba(255, 244, 220, ${BASE_ALPHA + w.glow * 0.75})`;
+        bgCtx.fillText(w.text, 0, 0);
+        bgCtx.restore();
+      }
+    }
+
+    function bgLoop(t) {
+      // No need to animate the background while the portfolio covers it
+      if (!document.body.classList.contains('portfolio-open')) drawWords(t);
+      requestAnimationFrame(bgLoop);
+    }
+
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseout', e => { if (!e.relatedTarget) { mouse.x = mouse.y = -9999; } });
+    window.addEventListener('touchmove', e => {
+      mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
+    }, { passive: true });
+    window.addEventListener('resize', buildWords);
+    buildWords();
+    requestAnimationFrame(bgLoop);
 
     // ── Music Player (YouTube Music playlist) ──
     // Paste the playlist ID from the YouTube Music share link
