@@ -865,7 +865,7 @@
     const bgCtx = bgCanvas.getContext('2d');
     const baseLayer = document.createElement('canvas'); // static dim text, drawn once per resize
     const BASE_ALPHA = 0.13;   // resting opacity
-    const GLOW_RADIUS = 150;   // px around the cursor that lights up
+    const GLOW_RADIUS = 120;   // px around the cursor that lights up
     const FONT_SIZE = 10, ROW_H = 13, GAP = 7;
     let bgWords = [];
     let bgW = 0, bgH = 0;
@@ -907,11 +907,10 @@
       let active = false;
       const glowing = [];
       for (const w of bgWords) {
-        // distance from cursor to the nearest point of the word
+        // a word lights up as a whole once any part of it falls inside the radius
         const dx = Math.max(w.x - mouse.x, 0, mouse.x - (w.x + w.w));
-        const d = Math.hypot(dx, w.y - mouse.y);
-        const target = d < GLOW_RADIUS ? Math.pow(1 - d / GLOW_RADIUS, 1.6) : 0;
-        w.glow += (target - w.glow) * 0.15; // ease in and out
+        const target = Math.hypot(dx, w.y - mouse.y) < GLOW_RADIUS ? 1 : 0;
+        w.glow += (target - w.glow) * 0.18; // quick fade in, slower fade out
         if (w.glow > 0.01) { glowing.push(w); active = true; }
       }
       if (!active && !dirty) return;
