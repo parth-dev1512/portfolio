@@ -870,7 +870,12 @@
     let bgWords = [];
     let bgW = 0, bgH = 0;
     let dirty = true;
-    const mouse = { x: -9999, y: -9999 };
+    const mouse = { x: 0, y: 0, inside: false }; // raw pointer
+    const cursor = { x: 0, y: 0 };                 // lagging point the light actually follows
+    const ripples = [];                             // click waves: { x, y, t0 }
+    const RIPPLE_SPEED = 0.55;                      // px per ms
+    const RIPPLE_WIDTH = 90;                        // px thickness of the wave front
+    let lastT = 0;
 
     function buildWords() {
       const dpr = window.devicePixelRatio || 1;
@@ -895,7 +900,11 @@
           let text = interestWords[Math.floor(Math.random() * interestWords.length)];
           if (Math.random() < 0.35) text = text[0].toUpperCase() + text.slice(1);
           const w = bctx.measureText(text).width;
-          bgWords.push({ text, x, y, w, glow: 0 });
+          bgWords.push({
+            text, x, y, w, glow: 0,
+            seed: Math.random() * 6.28,
+            rate: 0.6 + Math.random() * 1.2 // per-word response speed, for an organic trail
+          });
           bctx.fillText(text, x, y);
           x += w + GAP;
         }
@@ -903,36 +912,80 @@
       dirty = true;
     }
 
-    function drawWords() {
-      let active = false;
-      const glowing = [];
-      for (const w of bgWords) {
-        // a word lights up as a whole once any part of it falls inside the radius
-        const dx = Math.max(w.x - mouse.x, 0, mouse.x - (w.x + w.w));
-        const target = Math.hypot(dx, w.y - mouse.y) < GLOW_RADIUS ? 1 : 0;
-        w.glow += (target - w.glow) * 0.18; // quick fade in, slower fade out
-        if (w.glow > 0.01) { glowing.push(w); active = true; }
+    function drawWords(t) {
+      const dt = Math.min(t - lastT, 50) || 16;
+      lastT = t;
+
+      // The light chases the pointer with a lag instead of snapping to it
+      if (mouse.inside) {
+        const k = 1 - Math.exp(-dt / 140);
+        cursor.x += (mouse.x - cursor.x) * k;
+        cursor.y += (mouse.y - cursor.y) * k;
       }
+
+      // Drop finished ripples
+      const maxR = Math.hypot(bgW, bgH) + RIPPLE_WIDTH;
+      while (ripples.length && (t - ripples[0].t0) * RIPPLE_SPEED > maxR) ripples.shift();
+
+      let active = ripples.length > 0;
+      const lit = [];
+      for (const w of bgWords) {
+        const cx = w.x + w.w / 2;
+        let target = 0;
+
+        if (mouse.inside) {
+          // Wobbly, uneven edge: each word sees a slightly different, slowly shifting radius
+          const n = Math.sin(w.x * 0.011 + t * 0.0006 + w.seed) * 0.5 +
+                    Math.sin(w.y * 0.07 - t * 0.0009 + w.seed * 2) * 0.5;
+          const dx = Math.max(w.x - cursor.x, 0, cursor.x - (w.x + w.w));
+          if (Math.hypot(dx, w.y - cursor.y) < GLOW_RADIUS * (1 + 0.4 * n)) target = 1;
+        }
+
+        // Ease per word: lights up faster than it fades, each at its own pace
+        const speed = (target > w.glow ? 0.010 : 0.0035) * w.rate * dt;
+        w.glow += (target - w.glow) * Math.min(speed, 1);
+        let a = w.glow;
+
+        // Ripples: a bright ring travelling outward, weakening as it spreads
+        for (const r of ripples) {
+          const front = (t - r.t0) * RIPPLE_SPEED;
+          const off = Math.abs(Math.hypot(cx - r.x, w.y - r.y) - front);
+          if (off < RIPPLE_WIDTH) {
+            const ring = 0.5 + 0.5 * Math.cos(Math.PI * off / RIPPLE_WIDTH);
+            a = Math.max(a, ring * Math.max(0, 1 - front / maxR * 0.75));
+          }
+        }
+
+        if (a > 0.01) { lit.push([w, a]); active = true; }
+      }
+
       if (!active && !dirty) return;
       dirty = active;
       bgCtx.clearRect(0, 0, bgW, bgH);
       bgCtx.drawImage(baseLayer, 0, 0, bgW, bgH);
-      for (const w of glowing) {
-        bgCtx.fillStyle = `rgba(255, 244, 220, ${w.glow * 0.8})`;
+      for (const [w, a] of lit) {
+        bgCtx.fillStyle = `rgba(255, 244, 220, ${a * 0.8})`;
         bgCtx.fillText(w.text, w.x, w.y);
       }
     }
 
-    function bgLoop() {
+    function bgLoop(t) {
       // No need to animate the background while the portfolio covers it
-      if (!document.body.classList.contains('portfolio-open')) drawWords();
+      if (!document.body.classList.contains('portfolio-open')) drawWords(t);
       requestAnimationFrame(bgLoop);
     }
 
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    window.addEventListener('mouseout', e => { if (!e.relatedTarget) { mouse.x = mouse.y = -9999; } });
-    window.addEventListener('touchmove', e => {
-      mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
+    function point(x, y) {
+      if (!mouse.inside) { cursor.x = x; cursor.y = y; } // enter at the pointer, don't fly in
+      mouse.x = x; mouse.y = y; mouse.inside = true;
+    }
+    window.addEventListener('mousemove', e => point(e.clientX, e.clientY));
+    window.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.inside = false; });
+    window.addEventListener('touchmove', e => point(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+    window.addEventListener('mousedown', e => ripples.push({ x: e.clientX, y: e.clientY, t0: performance.now() }));
+    window.addEventListener('touchstart', e => {
+      const t0 = e.touches[0];
+      ripples.push({ x: t0.clientX, y: t0.clientY, t0: performance.now() });
     }, { passive: true });
     window.addEventListener('resize', buildWords);
     buildWords();
