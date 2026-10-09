@@ -1335,13 +1335,6 @@
               </div>
             </div>
           </div>
-
-          <a href="../freelance/" class="dropdown-component control-bar dropdown-link">
-            <div class="dropdown-bar">
-              <span class="dropdown-bar-label">Work with me</span>
-              <span class="dropdown-bar-arrow">→</span>
-            </div>
-          </a>
         </div>
       `;
     }
@@ -1393,6 +1386,32 @@
         setStop(idx);
       }
     });
+  </script>
+
+  <!-- Freelance bubble (bottom-right, dismissible) -->
+  <div class="work-bubble" id="workBubble">
+    <a href="../freelance/" class="wb-link">Work with me <span aria-hidden="true">→</span></a>
+    <button type="button" class="wb-close" id="wbClose" aria-label="Dismiss">✕</button>
+  </div>
+  <script>
+    (function () {
+      const bubble = document.getElementById('workBubble');
+      try { if (sessionStorage.getItem('wbDismissed')) bubble.hidden = true; } catch (e) { }
+      document.getElementById('wbClose').addEventListener('click', () => {
+        bubble.hidden = true;
+        try { sessionStorage.setItem('wbDismissed', '1'); } catch (e) { }
+      });
+      // On the landing page this page sits in an overlay, with the mini music player
+      // over the bottom-right corner. Lift the bubble above it while music is on.
+      try {
+        if (window.parent !== window) {
+          const pb = window.parent.document.body;
+          const sync = () => bubble.classList.toggle('above-mini', pb.classList.contains('music-on'));
+          sync();
+          new MutationObserver(sync).observe(pb, { attributes: true, attributeFilter: ['class'] });
+        }
+      } catch (e) { }
+    })();
   </script>
 </body>
 
