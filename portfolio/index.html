@@ -184,7 +184,7 @@
         id: 'code', label: 'code', blurb: 'repos & systems',
         eyebrow: 'DEVELOPMENT_LOG_v2.0', title: 'SYSTEM_ARCHIVE', titleFont: '"Pixelify Sans", sans-serif', titleItalic: false,
         subtitle: 'A collection of experiments, projects, and technical deep-dives.',
-        nav: ['/ALL', '/SYSTEMS', '/WEB', '/TOOLS'], navMono: true,
+        nav: ['/ALL', '/WEB', '/TOOLS', '/SYSTEMS'], navMono: true, // three most common project cats, in order
         filters: ['ALL', 'STABLE', 'BETA', 'ARCHIVE'],
         totalCount: 42,
         cols: 1, tileType: 'code', tileHeight: 180,
@@ -195,13 +195,13 @@
         icon: 'brackets',
         githubUrl: 'https://github.com/parth-dev1512',
         projects: [
-          { name: 'International Trade Journal', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737935/trade_journal_ss_mxqddp.png', desc: 'A platform created for the Ashoka Society for International Trade and Foregin Policy to post their blogs.', tags: ['Typescript', 'CSS'], link: 'ACCESS', url: 'https://astifp.github.io/astifp/blog.html', download: false },
-          { name: 'Nexus', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/nexus_ss_decciq.png', desc: 'Ashoka\'s Skill Sharing Platform: A space for students and faculty to schedule sessions, find courses, and share expertise.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://nexus-ashoka.vercel.app/', download: false },
-          { name: 'Meme Soundboard', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/memeboard_ss_wjtfg2.jpg', desc: 'A neo-brutalist meme soundboard application built for Android, featuring quick-access audio pads and custom uploads.', tags: ['Java', 'Android'], link: 'DOWNLOAD APK', url: 'code assets/memeboard.apk', download: true },
-          { name: 'ERP System', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/erp_ss_l0wvi4.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
-          { name: 'theOtherHand', preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/theOtherHand_ss_iuawst.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
-          { name: 'Internship Database', desc: 'An automatic internship database linked to Gmail.', tags: ['Gmail', 'Google Sheets'], link: 'ACCESS', url: 'https://docs.google.com/spreadsheets/d/1eRBWT0UIEe35lysRv1rVdToMhCwosIa0_pOb-aG5hcM/edit?gid=575087873#gid=575087873', download: false },
-          { name: 'Photobooth', desc: 'A photobooth I built in code that can be set up anywhere with just a laptop, a camera and a printer.', tags: ['Photobooth', 'Events'], link: '', url: '#', download: false },
+          { name: 'International Trade Journal', cats: ['web'], preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737935/trade_journal_ss_mxqddp.png', desc: 'A platform created for the Ashoka Society for International Trade and Foregin Policy to post their blogs.', tags: ['Typescript', 'CSS'], link: 'ACCESS', url: 'https://astifp.github.io/astifp/blog.html', download: false },
+          { name: 'Nexus', cats: ['web'], preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/nexus_ss_decciq.png', desc: 'Ashoka\'s Skill Sharing Platform: A space for students and faculty to schedule sessions, find courses, and share expertise.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://nexus-ashoka.vercel.app/', download: false },
+          { name: 'Meme Soundboard', cats: ['tools'], preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/memeboard_ss_wjtfg2.jpg', desc: 'A neo-brutalist meme soundboard application built for Android, featuring quick-access audio pads and custom uploads.', tags: ['Java', 'Android'], link: 'DOWNLOAD APK', url: 'code assets/memeboard.apk', download: true },
+          { name: 'ERP System', cats: ['systems'], preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/erp_ss_l0wvi4.png', desc: 'A comprehensive Enterprise Resource Planning system designed for streamlined business operations and management.', tags: ['Java'], link: '', url: '#', download: false },
+          { name: 'theOtherHand', cats: ['web'], preview: 'https://res.cloudinary.com/dajxyzvaz/image/upload/v1782737934/theOtherHand_ss_iuawst.png', desc: 'A website made for people to practice their digital handwriting skills with daily challenges and writing worksheets.', tags: ['Javascript', 'HTML', 'CSS'], link: 'ACCESS', url: 'https://parth-dev1512.github.io/theOtherHand/', download: false },
+          { name: 'Internship Database', cats: ['tools', 'systems'], desc: 'An automatic internship database linked to Gmail.', tags: ['Gmail', 'Google Sheets'], link: 'ACCESS', url: 'https://docs.google.com/spreadsheets/d/1eRBWT0UIEe35lysRv1rVdToMhCwosIa0_pOb-aG5hcM/edit?gid=575087873#gid=575087873', download: false },
+          { name: 'Photobooth', cats: ['tools', 'systems'], desc: 'A photobooth I built in code that can be set up anywhere with just a laptop, a camera and a printer.', tags: ['Photobooth', 'Events'], link: '', url: '#', download: false },
         ],
         currentProjects: [
           { name: 'CS Society Website', desc: 'Revamping the website for the Computer Science Society of Ashoka University as the President of the society.', progress: 50 },
@@ -558,6 +558,23 @@
           container.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
           tag.classList.add('active');
         });
+      });
+
+      // Code page: /tag nav acts as a project filter
+      const navItems = container.querySelectorAll('.pn-item[data-filter]');
+      navItems.forEach(item => {
+        const apply = () => {
+          const f = item.dataset.filter;
+          navItems.forEach(n => n.classList.toggle('active', n === item));
+          container.querySelectorAll('.pixel-card[data-cats]').forEach(card => {
+            const match = f === 'all' || card.dataset.cats.split(' ').includes(f);
+            card.classList.toggle('dimmed', !match);
+            card.setAttribute('aria-disabled', String(!match));
+            card.querySelectorAll('a').forEach(a => { a.tabIndex = match ? 0 : -1; });
+          });
+        };
+        item.addEventListener('click', apply);
+        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apply(); } });
       });
 
       // Special case for creative mode gallery
@@ -1055,10 +1072,11 @@
 
       if (s.id === 'code') {
         const projectHtml = s.projects.map((p, i) => `
-          <div class="pixel-card">
+          <div class="pixel-card" data-cats="${(p.cats || []).join(' ')}">
             <div class="pc-header">
               <h2 class="pc-name">${p.name}</h2>
               <div class="pc-tags">
+                ${(p.cats || []).map(c => `<span class="pc-tag pc-cat">/${c}</span>`).join('')}
                 ${p.tags.map(t => `<span class="pc-tag">${t}</span>`).join('')}
               </div>
             </div>
@@ -1121,7 +1139,7 @@
                 ` : ''}
               </div>
               <div class="pixel-nav">
-                ${s.nav.map(n => `<span class="pn-item">${n}</span>`).join('')}
+                ${s.nav.map(n => `<span class="pn-item${n === '/ALL' ? ' active' : ''}" data-filter="${n.slice(1).toLowerCase()}" role="button" tabindex="0">${n}</span>`).join('')}
               </div>
             </div>
             

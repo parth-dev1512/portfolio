@@ -833,9 +833,20 @@ body {
   color: #666;
 }
 
-.pn-item:hover {
+.pn-item:hover,
+.pn-item.active {
   color: #98fb98;
   cursor: pointer;
+}
+
+.pixel-card {
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+}
+
+.pixel-card.dimmed {
+  opacity: 0.3;
+  filter: grayscale(1);
+  pointer-events: none;
 }
 
 .experience-section {
