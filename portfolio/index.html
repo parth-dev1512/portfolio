@@ -184,7 +184,7 @@
         id: 'code', label: 'code', blurb: 'repos & systems',
         eyebrow: 'DEVELOPMENT_LOG_v2.0', title: 'SYSTEM_ARCHIVE', titleFont: '"Pixelify Sans", sans-serif', titleItalic: false,
         subtitle: 'A collection of experiments, projects, and technical deep-dives.',
-        nav: ['/ALL', '/WEBSITES', '/APPS', '/AUTOMATION', '/EVENTS'], navMono: true,
+        nav: ['/ALL', '/WEBSITES', '/APPS', '/AUTOMATION', '/EVENTS', '/AI'], navMono: true,
         filters: ['ALL', 'STABLE', 'BETA', 'ARCHIVE'],
         totalCount: 42,
         cols: 1, tileType: 'code', tileHeight: 180,
@@ -1139,7 +1139,7 @@
                 ` : ''}
               </div>
               <div class="pixel-nav">
-                ${s.nav.map(n => `<span class="pn-item${n === '/ALL' ? ' active' : ''}" data-filter="${n.slice(1).toLowerCase()}" role="button" tabindex="0">${n}</span>`).join('')}
+                ${s.nav.map(n => `<span class="pn-item${n === '/ALL' ? ' active' : ''}" data-filter="${n.slice(1).toLowerCase()}" role="button" tabindex="0">${n} (${n === '/ALL' ? s.projects.length : s.projects.filter(p => (p.cats || []).includes(n.slice(1).toLowerCase())).length})</span>`).join('')}
               </div>
             </div>
             
